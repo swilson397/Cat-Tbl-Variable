@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="pa_job_indicators">
+    <pa_job_indicators action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <collect>1</collect>
+        <collect_indicator>true</collect_indicator>
+        <display>temporary job for collecting Number of Tasks Updated - Number of Tasks Updated</display>
+        <indicator display_value="Number of Tasks Updated">09c8b652db730300768670adbf961932</indicator>
+        <job display_value="temporary job for collecting Number of Tasks Updated">0ec83e92db730300768670adbf96193f</job>
+        <sys_class_name>pa_job_indicators</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-24 01:22:57</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>c2c83e92db730300768670adbf961940</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Number of Tasks Updated.temporary job for collecting Number of Tasks Updated</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>pa_job_indicators_c2c83e92db730300768670adbf961940</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-01-24 01:22:57</sys_updated_on>
+    </pa_job_indicators>
+</record_update>

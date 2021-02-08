@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl_role">
+    <sys_security_acl_role action="INSERT_OR_UPDATE">
+        <sys_class_name>sys_security_acl_role</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-08 18:32:01</sys_created_on>
+        <sys_id>c0ea44e9db230300768670adbf96192f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_58056_cat_tbl_var_catalog_table_column.catalog_admin</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_security_acl display_value="x_58056_cat_tbl_var_catalog_table_column">c8ea44e9db230300768670adbf96192c</sys_security_acl>
+        <sys_update_name>sys_security_acl_role_c0ea44e9db230300768670adbf96192f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-01-08 18:32:01</sys_updated_on>
+        <sys_user_role display_value="catalog_admin" name="catalog_admin">e09d16f2c0a8016501281264b989e1db</sys_user_role>
+        <transaction_id/>
+    </sys_security_acl_role>
+</record_update>

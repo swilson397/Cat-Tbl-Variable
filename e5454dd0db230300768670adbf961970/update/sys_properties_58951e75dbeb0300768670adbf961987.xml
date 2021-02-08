@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>The sys_id of the widget used to render catalog table variables in the Service Portal</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_58056_cat_tbl_var.widget_id</name>
+        <read_roles/>
+        <suffix>widget_id</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-09 23:17:05</sys_created_on>
+        <sys_id>58951e75dbeb0300768670adbf961987</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_58056_cat_tbl_var.widget_id</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_properties_58951e75dbeb0300768670adbf961987</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-01-09 23:17:05</sys_updated_on>
+        <type>string</type>
+        <value>a479bda4db3b2200fe88d5f0cf9619e7</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=58951e75dbeb0300768670adbf961987"/>
+</record_update>

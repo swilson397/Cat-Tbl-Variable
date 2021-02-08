@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="item_option_new_set">
+    <item_option_new_set action="INSERT_OR_UPDATE">
+        <create_roles/>
+        <description/>
+        <display_title>false</display_title>
+        <internal_name>test_vs</internal_name>
+        <layout>normal</layout>
+        <name>test_vs</name>
+        <order>100</order>
+        <read_roles/>
+        <set_attributes/>
+        <sys_class_name>item_option_new_set</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-12 22:52:23</sys_created_on>
+        <sys_id>0ddcadf6dba70300768670adbf961946</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>test_vs</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>item_option_new_set_0ddcadf6dba70300768670adbf961946</sys_update_name>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2019-02-25 22:17:44</sys_updated_on>
+        <title>test_vs</title>
+        <type>one_to_one</type>
+        <write_roles/>
+    </item_option_new_set>
+</record_update>

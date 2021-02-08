@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function ($scope, $rootScope, $timeout, spUtil, $location, $window, nowAttachmentHandler) {
+	var c = this;
+	
+	var catTblVarRendered;
+	function renderCatTblVar() {
+		$timeout.cancel(catTblVarRendered);
+		catTblVarRendered = $timeout(function(){
+			if (! initializeCatTblVarIfCatalog()) {
+				if (! initializeCatTblVarIfForm()) {
+					alert("Not a catalog item or form.");
+				}
+			}
+		}, 80);
+	}
+	$timeout(renderCatTblVar);
+	
+	function initializeCatTblVarIfCatalog() {
+		var anchorsFound = false;
+		for (var i = 0; i < $scope.data.sc_tbl_variables.length; i++) {
+			var sc_tbl_variable = $scope.data.sc_tbl_variables[i];
+			var tblVarProps = sc_tbl_variable.tableData;
+			tblVarProps.isCatalogForm = true;
+			var selector = '#sp_formfield_IO\\:' + tblVarProps.tableProperties.resultVariable.sys_id;
+			var element = jQuery(selector);
+			if (element.length == 0) {
+				continue;
+			}
+			var anchorElement = null;
+			element = element.parent().closest('div');
+			if (element.length > 0) {
+				element.hide();
+				var element2 = element.prevAll('div');
+				if (element2.length > 0) {
+					element2.hide();
+				}
+				anchorElement = element.parent().closest('div');
+			}
+			if (! anchorElement || anchorElement.length == 0) {
+				alert("Anchor Element not found");
+				return;
+			}
+			
+			initializeCatTblVar(tblVarProps, anchorElement, sc_tbl_variable.serializedTable);
+			anchorsFound = true;
+		}
+		return anchorsFound;
+	}
+	
+	function initializeCatTblVar(tableData, tableAnchorElement, serializedTable) {
+		tableData.isSP = true;
+		var table = acn_sc_table_variable.buildTable(tableData, tableAnchorElement);
+		if (serializedTable != '') {
+			table.initialize(serializedTable);
+		}
+	}
+	
+	function initializeCatTblVarIfForm() {
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.timeline-body &gt; p {&#13;
+  white-space: pre-wrap;&#13;
+}&#13;
+&#13;
+.no-resize {&#13;
+  resize: none;&#13;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>Renders catalog table variables</description>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>acn-catalog-table-variable</id>
+        <internal>false</internal>
+        <link/>
+        <name>ACN - Catalog Table Variable</name>
+        <option_schema/>
+        <public>false</public>
+        <roles>snc_external,snc_internal</roles>
+        <script><![CDATA[(function() {
+	
+	data.cat_item_id = input.sys_id || $sp.getParameter("sys_id") || options.sys_id;
+	data.req_item_id = null;
+	
+	var isCatItem = false;
+	
+	if (data.cat_item_id && data.cat_item_id != '') {
+		var ciGR = new GlideRecord('sc_cat_item');
+		if (ciGR.get(data.cat_item_id)) {
+			isCatItem = true;
+		}
+	}
+	
+	gs.log("data.sys_id=" + data.sys_id + " data.cat_item_id=" + data.cat_item_id, "CTV");
+	
+	if (! isCatItem) {
+		data.task_id = options.task_id ? options.task_id : '';
+		data.task_table = options.task_table ? options.task_table : '';
+		data.req_item_id = data.task_id;
+		
+		// If no cat item id then this must be coming from a form
+		var serializedTable = '';
+		var gr = new GlideRecord(data.task_table);
+		if (gr.get(data.task_id)) {
+			if (data.task_table == "sc_req_item") {
+				data.cat_item_id = gr.getValue('cat_item');
+			} else {
+				data.cat_item_id = gr.request_item.cat_item;
+				data.req_item_id = gr.getValue('request_item');
+			}
+		}
+	}
+	
+	data.sc_tbl_variables = SCTblVarHelper.getSCTableData(data.cat_item_id, data.req_item_id);
+})()]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-08-02 20:50:30</sys_created_on>
+        <sys_id>0d12293bdbe39300768670adbf9619ab</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>ACN - Catalog Table Variable</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sp_widget_0d12293bdbe39300768670adbf9619ab</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-08-02 20:51:10</sys_updated_on>
+        <template><![CDATA[<div>
+<!-- your widget template -->
+</div>]]></template>
+    </sp_widget>
+</record_update>

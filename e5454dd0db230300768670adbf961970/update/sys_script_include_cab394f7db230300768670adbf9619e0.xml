@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_58056_cat_tbl_var.CatTblVarHTML</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>CatTblVarHTML</name>
+        <script><![CDATA[var CatTblVarHTML = Class.create();
+CatTblVarHTML.prototype = {
+    initialize: function(tableIsDisabled) {
+        this.tableIsDisabled = tableIsDisabled || false;
+
+        this._fieldGroupContainerClasses = "vsplit col-sm-6";
+        this._fieldContainerClasses =
+            "col-xs-12 col-sm-12 col-md-9 col-lg-7 form-field input_controls";
+        this._fieldLabelClasses = "col-xs-12 col-md-3 col-lg-4";
+        this._tableSectionClasses = "section-content form-horizontal";
+        this._mandatoryLabelProps = {
+            "class": "fa fa-asterisk mandatory required-marker",
+            title: "Mandatory - must be populated before Submit",
+            oclass: "mandatory",
+            mandatory: "true"
+        };
+    },
+
+    buildContainerHTML: function(tableName, title) {
+        //        var className = this.tableIsDisabled ? "" : "col-xs-12";
+        var className = "col-xs-12";
+        var xmlDoc = new XMLDocument2();
+        var tableContainer = this.createDocumentElement(xmlDoc, "div", {
+            id: tableName,
+            "class": className
+        });
+
+        xmlDoc.setCurrentElement(tableContainer);
+        var style = "padding: 5px; font-weight: bold";
+        if (!title || title == "") {
+            style += "; display=none";
+        }
+
+        //        className = this.tableIsDisabled ? "" : "row";
+        className = "row";
+
+        this.tableTitle = this.createDocumentElement(
+            xmlDoc,
+            "div",
+            {
+                id: tableName + "_table_title",
+                "class": className,
+                style: style
+            },
+            title
+        );
+
+        xmlDoc.setCurrentElement(tableContainer);
+        this.tableMarker = this.createDocumentElement(xmlDoc, "div", {
+            id: tableName + "_table_marker",
+            "class": className
+        });
+
+        return "" + xmlDoc.getDocumentElement().toString();
+    },
+
+    buildTableHTML: function(
+        tableName,
+        tblSeq,
+        tblSysID,
+        addTableButton,
+        deleteTableButton,
+        allowMultiple
+    ) {
+        var xmlDoc = new XMLDocument2();
+
+        //        var className = this.tableIsDisabled ? "" : this._tableSectionClasses;
+        var className = this._tableSectionClasses;
+        var style = "";
+
+        var props = {
+            id: "div_" + tableName + "_" + tblSeq,
+            "class": className
+        };
+
+        var div = this.createDocumentElement(xmlDoc, "div", props);
+
+        xmlDoc.setCurrentElement(div);
+
+        //        className = this.tableIsDisabled ? "" : "row";
+        className = "row";
+
+        // Table header container
+        var tblHeaderRow = this.createDocumentElement(xmlDoc, "div", {
+            "class": className
+        });
+
+        if (allowMultiple) {
+            xmlDoc.setCurrentElement(tblHeaderRow);
+            var headerDiv = this.createDocumentElement(xmlDoc, "div", {
+                style:
+                    "padding-bottom: 15px; padding-left: 5px; font-weight: bold; background-color: #e6e8ea; min-height: 33px"
+            });
+
+            xmlDoc.setCurrentElement(headerDiv);
+            if (addTableButton) {
+                this.createElement(xmlDoc, addTableButton, tblSeq, headerDiv, tblSysID);
+            }
+
+            xmlDoc.setCurrentElement(headerDiv);
+            if (deleteTableButton) {
+                this.createElement(xmlDoc, deleteTableButton, tblSeq, headerDiv, tblSysID);
+            }
+        }
+
+        // Create the pre-table fields
+        xmlDoc.setCurrentElement(div);
+        var preTblRow = this.createDocumentElement(xmlDoc, "div", {
+            id: "preTableRow_" + tableName + "_" + tblSeq,
+            "class": className
+        });
+
+        xmlDoc.setCurrentElement(preTblRow);
+        //        className = this.tableIsDisabled ? "" : this._fieldGroupContainerClasses;
+        className = this._fieldGroupContainerClasses;
+        //        style = this.tableIsDisabled ? "margin: 10px; display: table" : "margin: 10px";
+        style = "margin: 10px";
+        var preTblDiv = this.createDocumentElement(xmlDoc, "div", {
+            id: "preTableDiv_" + tableName + "_" + tblSeq,
+            style: style,
+            "class": className
+        });
+
+        // Create the table and column headers
+        xmlDoc.setCurrentElement(div);
+        //        className = this.tableIsDisabled ? "" : "row";
+        className = "row";
+        var tblRow = this.createDocumentElement(xmlDoc, "div", {
+            id: "tableRow_" + tableName + "_" + tblSeq,
+            "class": className
+        });
+        xmlDoc.setCurrentElement(tblRow);
+        //        className = this.tableIsDisabled ? "" : "col-xs-12";
+        className = "col-xs-12";
+        var tblDiv = this.createDocumentElement(xmlDoc, "div", {
+            id: "tableDiv_" + tableName + "_" + tblSeq,
+            style: "overflow-x: auto;",
+            "class": className
+        });
+
+        xmlDoc.setCurrentElement(tblDiv);
+        props = {
+            //            "class": this.tableIsDisabled ? "" : "table",
+            "class": "table",
+            "cell-padding": "0",
+            "cell-spacing": "0",
+            style: "background-color: transparent;",
+            table_rows: "0",
+            table_seq: tblSeq,
+            id: tableName + "_" + tblSeq
+        };
+        if (this.tableIsDisabled) {
+            props.border = "1";
+        }
+
+        this.createDocumentElement(xmlDoc, "table", props);
+
+        // Create the post-table fields
+        xmlDoc.setCurrentElement(div);
+        var postTblRow = this.createDocumentElement(xmlDoc, "div", {
+            id: "postTableRow_" + tableName + "_" + tblSeq,
+            //            "class": this.tableIsDisabled ? "" : "row"
+            "class": "row"
+        });
+        xmlDoc.setCurrentElement(postTblRow);
+        this.createDocumentElement(xmlDoc, "div", {
+            id: "postTableDiv_" + tableName + "_" + tblSeq,
+            //            "style": this.tableIsDisabled ? "margin: 10px; display: table" : "margin: 10px",
+            //            "class": this.tableIsDisabled ? "" : this._fieldGroupContainerClasses
+            style: "margin: 10px",
+            "class": this._fieldGroupContainerClasses
+        });
+
+        return "" + xmlDoc.getDocumentElement().toString();
+    },
+
+    createTableElement: function(tblSeq, rowSeq, field, isHeader, tblSysID) {
+        var xmlDoc = new XMLDocument2();
+
+        var tag = "td";
+        //        var style = this.tableIsDisabled ? "; vertical-align: top;" : "";
+        var style = "";
+        if (isHeader) {
+            tag = "th";
+            //            style = this.tableIsDisabled ? "; padding: 0px 4px;" : "";
+            style = "";
+        }
+
+        var cellCSS = field.cellCSS ? field.cellCSS : "";
+        var cell = this.createDocumentElement(xmlDoc, tag, {
+            nowrap: "nowrap",
+            style: cellCSS + style
+        });
+
+        this.createElement(xmlDoc, field, tblSeq + "." + rowSeq, cell, tblSysID);
+
+        return "" + xmlDoc.getDocumentElement().toString();
+    },
+
+    createFieldElement: function(tblSeq, field, tblSysID) {
+        var xmlDoc = new XMLDocument2();
+
+        //        var classNames = this.tableIsDisabled ? "" : "form-group";
+        var classNames = "form-group";
+        if (!this.tableIsDisabled && field.mandatory && field.type != "button") {
+            classNames += " is-required";
+        }
+        //        var style = this.tableIsDisabled ? "display: table-row" : "";
+        var style = "";
+        var div = this.createDocumentElement(xmlDoc, "div", {
+            name: "element." + field.id + "." + tblSeq,
+            id: "element." + field.id + "." + tblSeq,
+            "class": classNames,
+            style: style
+        });
+
+        xmlDoc.setCurrentElement(div);
+        //        var style = this.tableIsDisabled
+        //            ? "padding-right: 5px; display: table-cell; text-align: right;"
+        //            : "";
+        var style = "";
+        var lblDiv = this.createDocumentElement(xmlDoc, "div", {
+            name: "label_div." + field.id + "." + tblSeq,
+            id: "label_div." + field.id + "." + tblSeq,
+            nowrap: "true",
+            type: field.type,
+            style: style
+        });
+        this.buildLabelElement(xmlDoc, field, tblSeq, lblDiv);
+
+        var inputDivStyle = "";
+        if (field.cellCSS && field.cellCSS != "") {
+            inputDivStyle += field.cellCSS;
+        }
+        xmlDoc.setCurrentElement(div);
+        //        className = this.tableIsDisabled ? "" : this._fieldContainerClasses;
+        className = this._fieldContainerClasses;
+        var inputDiv = this.createDocumentElement(xmlDoc, "div", {
+            "class": className,
+            style: inputDivStyle
+        });
+
+        this.createElement(xmlDoc, field, tblSeq, inputDiv, tblSysID);
+        return "" + xmlDoc.getDocumentElement().toString();
+    },
+
+    createColumnHeaderElement: function(field, tblSeq) {
+        var xmlDoc = new XMLDocument2();
+        //        var style = this.tableIsDisabled ? "; padding: 0px 4px;" : "";
+        var style = "";
+        var cell = this.createDocumentElement(xmlDoc, "th", {
+            style: "vertical-align: bottom; " + field.labelCSS + style
+        });
+
+        if (field.type != "button") {
+            var label = this.buildLabelElement(xmlDoc, field, tblSeq, cell);
+            if (!this.tableIsDisabled && field.mandatory) {
+                cell.setAttribute("class", "is-required");
+            }
+        }
+        return "" + xmlDoc.getDocumentElement().toString();
+    },
+
+    createPlainElement: function(field, tblSeq, tblSysID) {
+        var xmlDoc = new XMLDocument2();
+        this.createElement(xmlDoc, field, tblSeq, xmlDoc.getDocumentElement(), tblSysID);
+        return "" + xmlDoc.getDocumentElement().toString();
+    },
+
+    buildLabelElement: function(xmlDoc, field, tblSeq, parentElement) {
+        var classNames = "control-label";
+        var style = "";
+        if (!field.isColumn) {
+            //            if (!this.tableIsDisabled) {
+            //                classNames = this._fieldLabelClasses;
+            //            }
+            classNames = this._fieldLabelClasses;
+            style = "text-align: right; margin-bottom: 0; padding-top: 7px;";
+        }
+        xmlDoc.setCurrentElement(parentElement);
+        var label = this.createDocumentElement(xmlDoc, "label", {
+            id: "label." + field.id + "." + tblSeq,
+            "class": classNames,
+            "for": field.id,
+            style: style
+        });
+
+        // Create the Status span
+        if (!this.tableIsDisabled) {
+            var props = {
+                id: "status." + field.id + "." + tblSeq,
+                "class": "",
+                title: "",
+                oclass: "",
+                mandatory: ""
+            };
+
+            if (field.mandatory) {
+                for (propName in this._mandatoryLabelProps) {
+                    props[propName] = this._mandatoryLabelProps[propName];
+                }
+            }
+
+            xmlDoc.setCurrentElement(label);
+            this.createDocumentElement(xmlDoc, "span", props);
+        }
+
+        // Create the text span
+        xmlDoc.setCurrentElement(label);
+        //        style = this.tableIsDisabled ? "" : "margin-left: 5px";
+        style = "margin-left: 5px";
+
+        this.createDocumentElement(
+            xmlDoc,
+            "span",
+            {
+                style: style
+            },
+            field.label
+        );
+    },
+
+    createElement: function(xmlDoc, field, fieldSuffix, parentElement, tblSysID) {
+        var onClick = "";
+        var onChange = "";
+        var props = {};
+        var className = "";
+
+        if (!xmlDoc) {
+            return null;
+        }
+        var element = null;
+        switch (field.type) {
+            case "reference":
+            case "choice":
+                element = this._createSelect2Element(
+                    xmlDoc,
+                    field.id,
+                    field.id + "." + fieldSuffix,
+                    parentElement,
+                    tblSysID
+                );
+                break;
+            case "datetime":
+            case "date":
+                xmlDoc.setCurrentElement(parentElement);
+                //                className = this.tableIsDisabled ? "" : "input-group";
+                className = "input-group";
+                var div = this.createDocumentElement(xmlDoc, "div", {
+                    "class": className,
+                    style: ""
+                });
+
+                element = this._createTextElement(
+                    xmlDoc,
+                    field.id,
+                    field.id + "." + fieldSuffix,
+                    div,
+                    tblSysID
+                );
+                var id =
+                    field.type == "datetime"
+                        ? field.id + "." + fieldSuffix + "_datetimepicker"
+                        : field.id + "." + fieldSuffix + "_datepicker";
+
+                if (!this.tableIsDisabled) {
+                    xmlDoc.setCurrentElement(div);
+                    var buttonGrp = this.createDocumentElement(xmlDoc, "span", {
+                        id: id,
+                        "class": "input-group-btn"
+                    });
+                    xmlDoc.setCurrentElement(buttonGrp);
+                    this.createDocumentElement(xmlDoc, "input", {
+                        "class": "datepickerinput",
+                        readonly: "readonly",
+                        type: "hidden"
+                    });
+                    xmlDoc.setCurrentElement(buttonGrp);
+                    var button = this.createDocumentElement(xmlDoc, "button", {
+                        "class": "btn btn-default",
+                        type: "button"
+                    });
+                    xmlDoc.setCurrentElement(button);
+                    this.createDocumentElement(xmlDoc, "span", {
+                        "class": "glyphicon glyphicon-calendar",
+                        "sn-char": "calendar"
+                    });
+                }
+                break;
+            case "button":
+                onClick =
+                    "acn_sc_table_variable.handleEvent('" +
+                    tblSysID +
+                    "', this, '" +
+                    field.clickEventName +
+                    "', '" +
+                    field.id +
+                    "')";
+                xmlDoc.setCurrentElement(parentElement);
+                if (field.imageSrc == "") {
+                    //                    className = this.tableIsDisabled
+                    //                        ? ""
+                    //                        : "form-control btn btn-default " + field.classNames;
+                    className = "form-control btn btn-default " + field.classNames;
+                    var style =
+                        field.cellCSS && field.cellCSS != ""
+                            ? field.cellCSS
+                            : "white-space: nowrap";
+                    props = {
+                        id: field.id + "." + fieldSuffix,
+                        "class": className,
+                        style: style,
+                        type: "button"
+                    };
+                    if (this.tableIsDisabled) {
+                        props.disabled = "";
+                    } else {
+                        props.onclick = onClick;
+                    }
+
+                    var fieldLabel = field.noLabel ? null : field.label;
+                    element = this._createButton(xmlDoc, props, parentElement, fieldLabel);
+                } else {
+                    //className = this.tableIsDisabled ? "" : "request_catalog_button_with_icon";
+                    className = "request_catalog_button_with_icon";
+                    props = {
+                        id: field.id + "." + fieldSuffix,
+                        href: "#",
+                        "class": className,
+                        style: "text-align: center;padding: 0px; border: none;",
+                        title: field.label,
+                        type: "button"
+                    };
+                    if (this.tableIsDisabled) {
+                        props.disabled = "";
+                    } else {
+                        props.onclick = onClick;
+                    }
+                    element = this.createDocumentElement(xmlDoc, "a", props);
+                    xmlDoc.setCurrentElement(element);
+                    this.createDocumentElement(xmlDoc, "img", {
+                        src: field.imageSrc
+                    });
+                }
+                break;
+            case "checkbox":
+                onClick =
+                    "acn_sc_table_variable.handleEvent('" +
+                    tblSysID +
+                    "', this, 'click', '" +
+                    field.id +
+                    "')";
+                xmlDoc.setCurrentElement(parentElement);
+                props = {
+                    id: field.id + "." + fieldSuffix,
+                    name: field.id + "." + fieldSuffix,
+                    type: "checkbox"
+                };
+                if (this.tableIsDisabled) {
+                    props.disabled = "";
+                } else {
+                    props.onclick = onClick;
+                }
+                element = this.createDocumentElement(xmlDoc, "input", props);
+                break;
+            case "multiline_text":
+                onChange =
+                    "acn_sc_table_variable.handleEvent('" +
+                    tblSysID +
+                    "', this, 'change', '" +
+                    field.id +
+                    "')";
+                xmlDoc.setCurrentElement(parentElement);
+                //                className = this.tableIsDisabled ? "" : "form-control";
+                className = "form-control";
+                props = {
+                    id: field.id + "." + fieldSuffix,
+                    name: field.id + "." + fieldSuffix,
+                    wrap: "soft",
+                    spellcheck: "true",
+                    "class": className
+                };
+                if (this.tableIsDisabled) {
+                    props.disabled = "";
+                } else {
+                    props.onchange = onChange;
+                }
+                element = this.createDocumentElement(xmlDoc, "textarea", props, "");
+                break;
+            default:
+                element = this._createTextElement(
+                    xmlDoc,
+                    field.id,
+                    field.id + "." + fieldSuffix,
+                    parentElement,
+                    tblSysID
+                );
+        }
+        return element;
+    },
+
+    createDocumentElement: function(xmlDoc, tagName, props, value) {
+        if (!xmlDoc) {
+            return null;
+        }
+        var e = null;
+        if (value) {
+            e = xmlDoc.createElementWithTextValue(tagName, value);
+        } else {
+            e = xmlDoc.createElement(tagName);
+        }
+        if (props) {
+            for (attrName in props) {
+                e.setAttribute(attrName, props[attrName]);
+            }
+        }
+        return e;
+    },
+
+    _createButton: function(xmlDoc, props, parentElement, fieldLabel) {
+        xmlDoc.setCurrentElement(parentElement);
+        return this.createDocumentElement(xmlDoc, "button", props, fieldLabel);
+    },
+
+    _createTextElement: function(xmlDoc, fieldName, id, parentElement, tblSysID) {
+        var props = {
+            id: id,
+            name: id,
+            "class": "form-control",
+            type: "text"
+        };
+        if (this.tableIsDisabled) {
+            props.disabled = "";
+        } else {
+            props.onchange =
+                "acn_sc_table_variable.handleEvent('" +
+                tblSysID +
+                "', this, 'change', '" +
+                fieldName +
+                "')";
+        }
+        xmlDoc.setCurrentElement(parentElement);
+        var element = this.createDocumentElement(xmlDoc, "input", props);
+        return element;
+    },
+
+    _createSelect2Element: function(xmlDoc, fieldName, id, parentElement, tblSysID) {
+        var className = "form-control";
+        var props = {
+            id: id,
+            name: id,
+            "class": className,
+            type: "text",
+            style: "border-width: 0px; padding: 0px"
+        };
+        if (this.tableIsDisabled) {
+            props.disabled = "";
+            props.style = "";
+        } else {
+            props.onchange =
+                "acn_sc_table_variable.handleEvent('" +
+                tblSysID +
+                "', this, 'change', '" +
+                fieldName +
+                "')";
+        }
+        xmlDoc.setCurrentElement(parentElement);
+        var element = this.createDocumentElement(xmlDoc, "input", props);
+        return element;
+    },
+
+    _log: function(msg) {
+        if (CatTblVarUtils.DEBUG) {
+            gs.info(msg);
+        }
+    },
+
+    _logError: function(msg) {
+        gs.error(msg);
+    },
+
+    type: "CatTblVarHTML"
+};
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-15 18:57:08</sys_created_on>
+        <sys_id>cab394f7db230300768670adbf9619e0</sys_id>
+        <sys_mod_count>11</sys_mod_count>
+        <sys_name>CatTblVarHTML</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_script_include_cab394f7db230300768670adbf9619e0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-08-07 19:03:10</sys_updated_on>
+    </sys_script_include>
+</record_update>

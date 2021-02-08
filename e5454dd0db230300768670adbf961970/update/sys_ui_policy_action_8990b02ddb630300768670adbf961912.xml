@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_policy_action">
+    <sys_ui_policy_action action="INSERT_OR_UPDATE">
+        <cleared>false</cleared>
+        <disabled>true</disabled>
+        <field>onsubmit_catalog_client_script</field>
+        <mandatory>ignore</mandatory>
+        <sys_class_name>sys_ui_policy_action</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-08 21:16:57</sys_created_on>
+        <sys_id>8990b02ddb630300768670adbf961912</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>onsubmit_catalog_client_script</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_ui_policy_action_8990b02ddb630300768670adbf961912</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-01-08 21:16:57</sys_updated_on>
+        <table>x_58056_cat_tbl_var_catalog_table_variable</table>
+        <ui_policy display_value="Make Catalog items read only">3670702ddb630300768670adbf961923</ui_policy>
+        <visible>ignore</visible>
+    </sys_ui_policy_action>
+</record_update>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_58056_cat_tbl_var.CatTblVarAjax</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description/>
+        <name>CatTblVarAjax</name>
+        <script><![CDATA[/**
+ * hh
+ */
+var CatTblVarAjax = Class.create();
+
+CatTblVarAjax.DEBUG = true;
+
+CatTblVarAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+    ajaxFunction_getTaskClientScript: function() {
+        var script = "";
+        var tblSysID = this.getParameter("sysparm_table_sys_id");
+
+        var ctvGR = new GlideRecord("x_58056_cat_tbl_var_catalog_table_variable");
+        if (!ctvGR.get("sys_id", tblSysID)) {
+            this._logError("Invalid table sys_id " + tblSysID);
+            return script;
+        }
+        var templateGR = new CatTblVarUtils().getTemplate("script", "Task Client Script");
+        if (!templateGR) {
+            this._logError("Task Client Script template not found.");
+            return script;
+        }
+        var scriptTemplate = templateGR.javascript_template.toString();
+        var scriptString = scriptTemplate.replace("{0}", ctvGR.result_variable.name.toString());
+        script = scriptString.replace("{1}", tblSysID);
+        return script;
+    },
+
+    ajaxFunction_getTableProperties: function() {
+        var utils = new CatTblVarUtils();
+        var tblSysID = this.getParameter("sysparm_table_sys_id");
+        var isCatItem = this.getParameter("sysparm_is_cat_item");
+
+        var disableTable = CatTblVarUtils.DISABLE_TABLE_NO;
+
+        if (isCatItem != "true") {
+            disableTable = CatTblVarUtils.DISABLE_TABLE_IF_AFTER_ORDERED;
+        }
+        var props = utils.getTableProperties(tblSysID, disableTable);
+        return JSON.stringify(props);
+    },
+
+    ajaxFunction_getTableReferenceData: function() {
+        var au = new global.ArrayUtil();
+
+        var parameters = JSON.parse(this.getParameter("sysparm_parameters"));
+        var table = parameters.sysparm_table;
+        var page = parameters.sysparm_page;
+        page = parseInt(page);
+        var pageSize = parameters.sysparm_page_size;
+        pageSize = parseInt(pageSize);
+        var term = "" + parameters.sysparm_term;
+        var refQual = parameters.sysparm_ref_qual;
+
+        var acColumns = "" + parameters.sysparm_ac_columns;
+        acColumns = acColumns.split(",");
+
+        var acStartsWith = parameters.sysparm_ac_startswith;
+        this._log("after parms set");
+        var results = {};
+
+        var gr = new GlideRecord(table);
+        gr.initialize();
+
+        // Get the fields we want to search on
+        var displayField = this._getDisplayField(table);
+        // If no specific display field then check for name or number
+        if (displayField == null) {
+            if (gr.isValidField("name")) {
+                displayField = "name";
+            } else if (gr.isValidField("number")) {
+                displayField = "number";
+            } else if (gr.isValidField("u_number")) {
+                displayField = "u_number";
+            } else if (gr.isValidField("u_name")) {
+                displayField = "u_name";
+            }
+        }
+
+        this._log("displayField=" + displayField);
+
+        var searchFields = gr.getElements().reduce(function(names, el) {
+            var ed = el.getED();
+            if (au.contains(acColumns, ed.getName())) {
+                names.push(ed.getName());
+            }
+            return names;
+        }, []);
+
+        this._log("searchFields=" + searchFields);
+
+        var opr = "CONTAINS";
+        if (acStartsWith == "true") {
+            opr = "STARTSWITH";
+        }
+
+        if (term != "") {
+            var qc = null;
+            if (displayField != null) {
+                qc = gr.addQuery(displayField, opr, term);
+            }
+            for (i = 0; i < searchFields.length; i++) {
+                if (!qc) {
+                    qc = gr.addQuery(searchFields[i], opr, term);
+                } else {
+                    qc.addOrCondition(searchFields[i], opr, term);
+                }
+            }
+        }
+
+        // Set the order by field
+        if (displayField != null) {
+            gr.orderBy(displayField);
+        }
+
+        if (refQual != "") {
+            gr.addEncodedQuery(refQual);
+        }
+        results.total_count = gr.getRowCount();
+        results.items = [];
+        results.page = page + 1;
+        var location = (page - 1) * pageSize;
+        gr.chooseWindow(location, location + pageSize, true);
+        gr.query();
+        this._log("total rows found=" + gr.getRowCount());
+        while (gr.next()) {
+            this._log("Adding row " + gr.getDisplayValue());
+            var searchFieldValues = searchFields.reduce(function(values, name) {
+                values.push(gr[name].getDisplayValue());
+                return values;
+            }, []);
+            results.items.push({
+                id: gr.getValue("sys_id"),
+                text: gr.getDisplayValue(),
+                additionalValues: searchFieldValues
+            });
+            if (results.items.length == pageSize) {
+                this._log("Enough items.");
+                break;
+            }
+        }
+        return JSON.stringify(results);
+    },
+
+    _getDisplayField: function(table) {
+        var dOverrideGR = new GlideRecord("sys_dictionary_override");
+        dOverrideGR.addQuery("name", table);
+        dOverrideGR.addQuery("display_override", true);
+        dOverrideGR.query();
+        if (dOverrideGR.next()) {
+            return dOverrideGR.element.toString();
+        }
+        var tableUtil = new GlideTableHierarchy(table);
+
+        var elementName = null;
+        var dGR = new GlideRecord("sys_dictionary");
+        dGR.addQuery("name", tableUtil.getHierarchy());
+        dGR.addQuery("display", true);
+        dGR.query();
+        while (dGR.next()) {
+            if (dGR.name == table) {
+                return dGR.element.toString();
+            }
+            elementName = dGR.element.toString();
+        }
+        return elementName;
+    },
+
+    ajaxFunction_getCIData: function() {
+        var ciData = {
+            ci_os: "",
+            ci_short_descr: ""
+        };
+        var id = this.getParameter("sysparm_id");
+        var ci = new GlideRecord("cmdb_ci_server");
+        if (ci.get(id)) {
+            ciData = {
+                ci_os: ci.os.getDisplayValue(),
+                ci_short_descr: ci.getValue("short_description")
+            };
+        }
+        var answer = JSON.stringify(ciData);
+        return answer;
+    },
+
+    _log: function(msg) {
+        if (CatTblVarAjax.DEBUG) {
+            gs.info(msg, this.type);
+        }
+    },
+
+    _logError: function(msg) {
+        gs.error(msg, this.type);
+    },
+
+    type: "CatTblVarAjax"
+});
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-13 21:06:20</sys_created_on>
+        <sys_id>f30eda87db230300768670adbf961998</sys_id>
+        <sys_mod_count>21</sys_mod_count>
+        <sys_name>CatTblVarAjax</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_script_include_f30eda87db230300768670adbf961998</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-05-19 22:40:00</sys_updated_on>
+    </sys_script_include>
+</record_update>

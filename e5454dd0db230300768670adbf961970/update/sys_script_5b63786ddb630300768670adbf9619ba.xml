@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_query>false</action_query>
+        <action_update>true</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_58056_cat_tbl_var_catalog_table_variable</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition/>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>Build variable set</name>
+        <order>100</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[var jsName = current.short_description.toLowerCase();
+if (jsName.length > 29) {
+	jsName = jsName.substr(0, 29);
+}
+jsName = jsName.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_');
+
+var varSetName = jsName + "_vs";
+// Create the variable set
+var varSetId;
+if (current.variable_set.nil()) {
+	var varSetGR = new GlideRecord('item_option_new_set');
+	if (!varSetGR.get('name', varSetName)) {
+		var varSetAttrs = {
+			"name" : varSetName
+		};
+		var varSet = new sn_sc.CatalogItemVariableSet();
+		varSet.setAttributes(varSetAttrs);
+		varSetId = varSet.create(true);
+	} else {
+		varSetId = varSetGR.sys_id.toString();
+	}
+	current.variable_set = varSetId;
+} else {
+	varSetId = current.variable_set.toString();
+}
+
+// Create the result variable
+var resultVarID, varAttrs, ciVar;
+var varCreated = false;
+var resultVarName = jsName + '_result';
+var varAttrs = {
+	"variable_set" : varSetId,
+	"question_text" : jsName,
+	"visible_summary" : true,
+	"order" : 998
+};
+if (current.result_variable.nil()) {
+	varGR = new GlideRecord('item_option_new');
+	varGR.addQuery('type', 2);
+	varGR.addQuery('name', resultVarName);
+	varGR.query();
+	if (!varGR.next()) {
+		varAttrs.type = "2";
+		varAttrs.name = resultVarName;
+		ciVar = new sn_sc.CatalogItemVariable();
+		ciVar.setAttributes(varAttrs);
+		resultVarID = ciVar.create(true);
+		varCreated = true;
+	} else {
+		resultVarID = varGR.sys_id.toString();
+	}
+	current.result_variable = resultVarID;
+} else {
+	resultVarID = current.result_variable.toString();
+}
+// Update the variable if it already existed
+if (!varCreated) {
+	ciVar = new sn_sc.CatalogItemVariable(resultVarID);
+	ciVar.update(varAttrs, true);
+}
+
+// Create the widget variable
+var widgetVarID;
+varCreated = false;
+varAttrs = {
+	"variable_set" : varSetId,
+	"question_text" : jsName + '_widget',
+	"visible_summary" : true,
+	"order" : 999,
+	"sp_widget" : gs.getProperty('x_58056_cat_tbl_var.widget_id')
+};
+if (current.widget_variable.nil()) {
+	widgetVarGR = new GlideRecord('item_option_new');
+	widgetVarGR.addQuery('type', 14);
+	widgetVarGR.addQuery('name', jsName + '_widget');
+	widgetVarGR.query();
+	if (!widgetVarGR.next()) {
+		varAttrs.type = "14";
+		varAttrs.name = jsName + '_widget';
+		ciVar = new sn_sc.CatalogItemVariable();
+		ciVar.setAttributes(varAttrs);
+		widgetVarID = ciVar.create(true);
+		varCreated = true;
+	} else {
+		widgetVarID = widgetVarGR.sys_id.toString();
+	}
+	current.widget_variable = widgetVarID;
+} else {
+	widgetVarID = current.widget_variable.toString();
+}
+// Update the variable if it already existed
+if (!varCreated) {
+	ciVar = new sn_sc.CatalogItemVariable(widgetVarID);
+	ciVar.update(varAttrs, true);
+}
+
+// Create the onChange catalog client script for the standard UI
+// The script that loads and renders the table
+var templateGR = new CatTblVarUtils().getTemplate('script', 'OnChange Catalog Client Script');
+if (templateGR) {
+	var scriptTemplate = templateGR.javascript_template.toString();
+	var scriptString = scriptTemplate.replace('{0}', current.sys_id.toString());
+
+	var csAttrs, clientScriptGR, clientScript, clientScriptID;
+	var ocCSName = jsName + "_oc_cs";
+	if (current.onchange_catalog_client_script.nil()) {
+		csAttrs = {
+			"ui_type" : "0",
+			"active" : true,
+			"applies_to" : 'set',
+			"type" : 'onChange'
+		};
+		clientScriptGR = new GlideRecord('catalog_script_client');
+		if (!clientScriptGR.get('name', ocCSName)) {
+			csAttrs.name = ocCSName;
+			clientScript = new sn_sc.CatalogClientScript();
+			clientScript.setAttributes(csAttrs);
+			clientScript.setVariableSet(varSetId);
+			clientScript.setOnChangeVariable("IO:" + resultVarID);
+			clientScript.addScript(scriptString);
+			clientScript.appliesToCatalogItem(true);
+			clientScript.appliesToRequestedItem(true);
+			clientScript.appliesToCatalogTask(true);
+			clientScript.appliesToTargetRecord(true);
+			clientScriptID = clientScript.create(true);
+		} else {
+			clientScriptID = clientScriptGR.sys_id.toString();
+		}
+		current.onchange_catalog_client_script = clientScriptID;
+	} else {
+		clientScriptID = current.onchange_catalog_client_script.toString();
+	}
+}
+
+// Create the onSubmit
+templateGR = new CatTblVarUtils().getTemplate('script', 'OnSubmit Catalog Client Script');
+if (templateGR) {
+	var scriptTemplate = templateGR.javascript_template.toString();
+	var onSubmitClientScript = scriptTemplate.replace('{0}', current.sys_id.toString());
+
+	var osCsName = jsName + "_os_cs";
+	if (current.onsubmit_catalog_client_script.nil()) {
+		csAttrs = {
+			"ui_type" : "10",
+			"active" : true,
+			"applies_to" : 'set',
+			"type" : 'onSubmit'
+		};
+		clientScriptGR = new GlideRecord('catalog_script_client');
+		if (!clientScriptGR.get('name', osCsName)) {
+			csAttrs.name = osCsName;
+			clientScript = new sn_sc.CatalogClientScript();
+			clientScript.setAttributes(csAttrs);
+			clientScript.setVariableSet(varSetId);
+			clientScript.addScript(onSubmitClientScript);
+			clientScript.appliesToCatalogItem(true);
+			clientScript.appliesToRequestedItem(true);
+			clientScript.appliesToCatalogTask(true);
+			clientScript.appliesToTargetRecord(true);
+			clientScriptID = clientScript.create(true);
+		} else {
+			clientScriptID = clientScriptGR.sys_id.toString();
+		}
+		current.onsubmit_catalog_client_script = clientScriptID;
+	} else {
+		clientScriptID = current.onsubmit_catalog_client_script.toString();
+	}
+}]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-08 21:31:58</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>5b63786ddb630300768670adbf9619ba</sys_id>
+        <sys_mod_count>10</sys_mod_count>
+        <sys_name>Build variable set</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_script_5b63786ddb630300768670adbf9619ba</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-01-13 20:50:38</sys_updated_on>
+        <template/>
+        <when>before</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=5b63786ddb630300768670adbf9619ba"/>
+</record_update>

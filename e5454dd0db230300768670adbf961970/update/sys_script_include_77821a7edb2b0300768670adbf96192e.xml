@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_58056_cat_tbl_var.CatTblVarHelper</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description/>
+        <name>CatTblVarHelper</name>
+        <script><![CDATA[var CatTblVarHelper = Class.create();
+
+CatTblVarHelper.getVariableSets = function() {
+    var utils = new CatTblVarHelper();
+    return utils.getVariableSets();
+};
+
+CatTblVarHelper.getTableVariable = function(questionID) {
+    var gr = new GlideRecord('x_58056_cat_tbl_var_catalog_table_variable');
+    if (gr.get('result_variable', questionID)) {
+        return gr;
+    }
+    return null;
+};
+
+CatTblVarHelper.isTableVariableQuestion = function(questionID) {
+    var result = {
+        "isTableVariableQuestion" : false,
+        "isWidget" : false
+    };
+    // Checks if the question id is for a results variable that would be
+    // part of a catalog table variable configuration
+    var gr = new GlideRecord('x_58056_cat_tbl_var_catalog_table_variable');
+    gr.addQuery('result_variable', questionID).addOrCondition('widget_variable', questionID);
+    gr.query();
+    if (gr.next()) {
+        result.isTableVariableQuestion = true;
+        result.isWidget = gr.widget_variable.toString() == questionID;
+    }
+    return result;
+};
+
+CatTblVarHelper.hasCatalogTableVariables = function(catItemSysID) {
+    var varSetGR = new GlideRecord('io_set_item');
+    varSetGR.addQuery('sc_cat_item', catItemSysID);
+    varSetGR.query();
+    while (varSetGR.next()) {
+        var svtGR = new GlideRecord('x_58056_cat_tbl_var_catalog_table_variable');
+        if (svtGR.get('variable_set', varSetGR.variable_set.toString())) {
+            return true;
+        }
+    }
+    return false;
+};
+
+CatTblVarHelper.getSCTableData = function(catItemSysID, reqItemID) {
+    var utils = new CatTblVarUtils();
+    var serializedTable = '';
+    var data = [];
+
+    var disableTable = CatTblVarUtils.DISABLE_TABLE_NO;
+
+    var reqItemGR = null;
+    if (reqItemID) {
+        var reqItemGR = new GlideRecord('sc_req_item');
+        if (!reqItemGR.get(reqItemID)) {
+            reqItemGR = null;
+        } else {
+            disableTable = CatTblVarUtils.DISABLE_TABLE_IF_AFTER_ORDERED;
+        }
+    }
+
+    var varSetGR = new GlideRecord('io_set_item');
+    varSetGR.addQuery('sc_cat_item', catItemSysID);
+    varSetGR.query();
+    while (varSetGR.next()) {
+        var svtGR = new GlideRecord('x_58056_cat_tbl_var_catalog_table_variable');
+        if (svtGR.get('variable_set', varSetGR.variable_set.toString())) {
+            var resultVarName = svtGR.result_variable.name;
+            if (reqItemGR && resultVarName) {
+                serializedTable = reqItemGR.variables[resultVarName];
+            }
+            var tblID = svtGR.sys_id.toString();
+            var props = utils.getTableProperties(tblID, disableTable);
+            data.push({
+                        "tableData" : props,
+                        "serializeTable" : serializedTable
+                    });
+        }
+    }
+    return data;
+};
+
+CatTblVarHelper.prototype = {
+    initialize : function() {
+        this.tables = [];
+        this.table = null;
+        this.colWidth = {};
+        this.json = new global.JSON();
+        this.utils = new CatTblVarUtils();
+    },
+
+    setTables : function(resultText) {
+        this.tables = new global.JSON().decode(resultText);
+        if (this.tables.length > 0) {
+            this.table = this.tables[0];
+        }
+    },
+
+    getVariableSets : function() {
+        var vsList = [];
+        var svtGR = new GlideRecord('x_58056_cat_tbl_var_catalog_table_variable');
+        svtGR.query();
+        while (svtGR.next()) {
+            vsList.push(svtGR.variable_set.toString());
+        }
+        return vsList;
+    },
+
+    getTables : function() {
+        return this.tables;
+    },
+
+    setTable : function(idx) {
+        if (idx >= this.tables.length) {
+            this.table = null;
+            return null;
+        }
+        this.table = this.tables[idx];
+        return this.table;
+    },
+
+    getTable : function() {
+        return this.table;
+    },
+
+    getRows : function(table) {
+        if (table) {
+            return table.rows;
+        }
+        return [];
+    },
+
+    getCell : function(row, colName) {
+        for (var i = 0; i < row.length; i++) {
+            var cell = row[i];
+            if (cell.field == colName) {
+                return cell;
+            }
+        }
+        return null;
+    },
+
+    getPreFields : function(table) {
+        if (table) {
+            return table.preFields;
+        }
+        return [];
+    },
+
+    getPostFields : function(table) {
+        if (table) {
+            return table.postFields;
+        }
+        return [];
+    },
+
+    getField : function(fields, colName) {
+        for (var i = 0; i < fields.length; i++) {
+            var field = fields[i];
+            if (field.field == colName) {
+                return field;
+            }
+        }
+        return null;
+    },
+
+    _log : function(msg) {
+        if (CatTblVarUtils.DEBUG) {
+            gs.info(msg);
+        }
+    },
+
+    _logError : function(msg) {
+        gs.error(msg);
+    },
+
+    type : "CatTblVarHelper"
+};
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-13 01:37:24</sys_created_on>
+        <sys_id>77821a7edb2b0300768670adbf96192e</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>CatTblVarHelper</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_script_include_77821a7edb2b0300768670adbf96192e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-01-17 01:33:27</sys_updated_on>
+    </sys_script_include>
+</record_update>

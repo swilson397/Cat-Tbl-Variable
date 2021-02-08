@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties_category_m2m">
+    <sys_properties_category_m2m action="INSERT_OR_UPDATE">
+        <category display_value="Catalog Table Variable">5146d2b5dbeb0300768670adbf961950</category>
+        <order>300</order>
+        <property display_value="x_58056_cat_tbl_var.invalid_missing_value_color" name="x_58056_cat_tbl_var.invalid_missing_value_color">efb65ab5dbeb0300768670adbf961910</property>
+        <sys_class_name>sys_properties_category_m2m</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-09 23:22:20</sys_created_on>
+        <sys_id>aee61ab5dbeb0300768670adbf9619f0</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_58056_cat_tbl_var.invalid_missing_value_color.Catalog Table Variable</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_properties_category_m2m_aee61ab5dbeb0300768670adbf9619f0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-01-09 23:22:31</sys_updated_on>
+    </sys_properties_category_m2m>
+</record_update>

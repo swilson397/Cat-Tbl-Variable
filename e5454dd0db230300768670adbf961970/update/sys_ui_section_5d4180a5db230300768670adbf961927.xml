@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_ui_section caption="Fields" section_id="5d4180a5db230300768670adbf961927" sys_domain="global" table="x_58056_cat_tbl_var_catalog_table_variable" version="3" view="">
+        <sys_ui_annotation action="INSERT_OR_UPDATE">
+            <is_plain_text>false</is_plain_text>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-01-08 18:34:54</sys_created_on>
+            <sys_id>528b44e9db230300768670adbf96195b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-01-08 18:34:54</sys_updated_on>
+            <text>Use the rows in this table to define fields related to the table but rendered either before or after the table itself.</text>
+            <type display_value="Info Box Blue">753f88a80f930000b12e6903cfe01206</type>
+        </sys_ui_annotation>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>528b44e9db230300768670adbf96195b</element>
+            <position>0</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-01-08 18:34:54</sys_created_on>
+            <sys_id>168b44e9db230300768670adbf96195b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="Fields" display_value="Fields" name="x_58056_cat_tbl_var_catalog_table_variable" sys_domain="global" view="Default view">5d4180a5db230300768670adbf961927</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-01-08 18:34:54</sys_updated_on>
+            <sys_user/>
+            <type>annotation</type>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>12M.x_58056_cat_tbl_var_catalog_table_variable.x_58056_cat_tbl_var_catalog_table_field.catalog_table_variable</element>
+            <position>1</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-01-08 18:34:54</sys_created_on>
+            <sys_id>968b44e9db230300768670adbf96195b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="Fields" display_value="Fields" name="x_58056_cat_tbl_var_catalog_table_variable" sys_domain="global" view="Default view">5d4180a5db230300768670adbf961927</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-01-08 18:34:54</sys_updated_on>
+            <sys_user/>
+            <type>list</type>
+        </sys_ui_element>
+        <sys_ui_section action="INSERT_OR_UPDATE">
+            <caption>Fields</caption>
+            <header>false</header>
+            <name>x_58056_cat_tbl_var_catalog_table_variable</name>
+            <roles/>
+            <sys_class_name>sys_ui_section</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-01-08 17:50:03</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>5d4180a5db230300768670adbf961927</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_58056_cat_tbl_var_catalog_table_variable</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+            <sys_update_name>sys_ui_section_5d4180a5db230300768670adbf961927</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-01-08 17:50:03</sys_updated_on>
+            <sys_user/>
+            <title>false</title>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_section>
+    </sys_ui_section>
+</record_update>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_ui_form_sections form_id="cf0da02ddb230300768670adbf961909" sys_domain="global" table="x_58056_cat_tbl_var_catalog_table_column" version="3">
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>0</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-01-08 21:01:18</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>4b0da02ddb230300768670adbf96190a</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_58056_cat_tbl_var_catalog_table_column" name="x_58056_cat_tbl_var_catalog_table_column" sys_domain="global" view="Default view">cf0da02ddb230300768670adbf961909</sys_ui_form>
+            <sys_ui_section caption="NULL" display_value="" name="x_58056_cat_tbl_var_catalog_table_column" sys_domain="global" view="Default view">e41c2c69db630300768670adbf961975</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-01-08 21:01:18</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>1</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-01-12 23:26:10</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>c494b932db2b0300768670adbf9619e8</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_58056_cat_tbl_var_catalog_table_column" name="x_58056_cat_tbl_var_catalog_table_column" sys_domain="global" view="Default view">cf0da02ddb230300768670adbf961909</sys_ui_form>
+            <sys_ui_section caption="Advanced" display_value="Advanced" name="x_58056_cat_tbl_var_catalog_table_column" sys_domain="global" view="Default view">4494b932db2b0300768670adbf9619e6</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-01-12 23:27:17</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>2</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-01-08 21:01:18</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>830de0a9db630300768670adbf961948</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_58056_cat_tbl_var_catalog_table_column" name="x_58056_cat_tbl_var_catalog_table_column" sys_domain="global" view="Default view">cf0da02ddb230300768670adbf961909</sys_ui_form>
+            <sys_ui_section caption="Choice List" display_value="Choice List" name="x_58056_cat_tbl_var_catalog_table_column" sys_domain="global" view="Default view">430da02ddb230300768670adbf96190b</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-01-12 23:27:17</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>3</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-01-08 21:02:15</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>f84da82ddb230300768670adbf9619e7</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_58056_cat_tbl_var_catalog_table_column" name="x_58056_cat_tbl_var_catalog_table_column" sys_domain="global" view="Default view">cf0da02ddb230300768670adbf961909</sys_ui_form>
+            <sys_ui_section caption="OnChange" display_value="OnChange" name="x_58056_cat_tbl_var_catalog_table_column" sys_domain="global" view="Default view">7c4da82ddb230300768670adbf9619e5</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-01-12 23:27:17</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>4</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-01-08 21:02:36</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>0a5d2c69db630300768670adbf9619e9</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_58056_cat_tbl_var_catalog_table_column" name="x_58056_cat_tbl_var_catalog_table_column" sys_domain="global" view="Default view">cf0da02ddb230300768670adbf961909</sys_ui_form>
+            <sys_ui_section caption="OnClick" display_value="OnClick" name="x_58056_cat_tbl_var_catalog_table_column" sys_domain="global" view="Default view">c65d2c69db630300768670adbf9619e7</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-01-12 23:27:17</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form action="INSERT_OR_UPDATE">
+            <name>x_58056_cat_tbl_var_catalog_table_column</name>
+            <roles/>
+            <sys_class_name>sys_ui_form</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-01-08 21:01:18</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>cf0da02ddb230300768670adbf961909</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_58056_cat_tbl_var_catalog_table_column</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+            <sys_update_name>sys_ui_form_sections_cf0da02ddb230300768670adbf961909</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-01-08 21:01:18</sys_updated_on>
+            <sys_user/>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_form>
+    </sys_ui_form_sections>
+</record_update>

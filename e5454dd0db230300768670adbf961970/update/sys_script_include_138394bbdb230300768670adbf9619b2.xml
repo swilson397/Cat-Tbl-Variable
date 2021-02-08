@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_58056_cat_tbl_var.CatTblVarStatic</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>CatTblVarStatic</name>
+        <script><![CDATA[var CatTblVarStatic = Class.create();
+
+CatTblVarStatic.getStaticHTMLforTable = function(catTblVarID, taskTbl, taskID) {
+    return new CatTblVarStatic().getStaticHTML(catTblVarID, taskTbl, taskID);
+};
+
+CatTblVarStatic.prototype = {
+    initialize: function() {
+        this.json = new JSON();
+        this.xmlUtil = GlideXMLUtil;
+        this.htmlUtils = new CatTblVarHTML();
+    },
+
+    /* Functions for building static HTML string */
+    getStaticHTML: function(catTblVarID, docTable, docID) {
+        var utils = new CatTblVarUtils();
+        var tableDefinition = utils.getTableProperties(
+            catTblVarID,
+            CatTblVarUtils.DISABLE_TABLE_YES
+        );
+        var tableProperties = tableDefinition.tableProperties;
+
+        if (tableDefinition.status == "error") {
+            this._logError(tableDefinition.message);
+            return "error";
+        }
+
+        var tables = [];
+
+        if (docTable && docID) {
+            var docGR = new GlideRecord(docTable);
+            if (docGR.get(docID)) {
+                if (typeof docGR.variables[tableProperties.resultVariable.name] != "undefined") {
+                    var jsonText = "" + docGR.variables[tableProperties.resultVariable.name];
+                    tables = this.json.decode(jsonText);
+                }
+            }
+        }
+
+        // Building blocks
+        var containerDoc = new GlideXMLDocument();
+        containerDoc.parse(tableDefinition.containerHTML);
+
+        var tblMarker = this._getElementByID(
+            tableProperties.tableName + "_table_marker",
+            containerDoc
+        );
+        if (!tblMarker) {
+            this._logError(
+                "Node with id '" + tableProperties.tableName + "_table_marker' not found."
+            );
+            return "";
+        }
+
+        // If no data saved for table then just
+        // show an empty one
+        if (tables.length == 0) {
+            tables.push({
+                preFields: [],
+                postFields: [],
+                rows: []
+            });
+        }
+
+        for (var tIdx = 0; tIdx < tables.length; tIdx++) {
+            var tblSeq = tIdx;
+            tblSeq++;
+            var tableObj = tables[tIdx];
+            var table = this._createTableSection(
+                tableDefinition.tableHTML,
+                tableProperties.tableName,
+                tblSeq,
+                tableDefinition.preFieldList,
+                tableDefinition.tableColumnList,
+                tableDefinition.postFieldList,
+                tableProperties.addRowButton,
+                tableObj
+            );
+            this._appendElement(table.getDocumentElement(), containerDoc, tblMarker);
+        }
+
+        return this.xmlUtil.toFragmentString(containerDoc.getDocument());
+    },
+
+    _createTableSection: function(
+        tableTemplateHTML,
+        tableName,
+        tblSeq,
+        preTableFields,
+        tableFields,
+        postTableFields,
+        addRowButton,
+        tableObj
+    ) {
+        // Create new table doc as copy of template
+        var tableHTML = tableTemplateHTML.replace(
+            new RegExp(CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER, "gi"),
+            tblSeq
+        );
+        var tableDoc = new GlideXMLDocument();
+        tableDoc.parse(tableHTML);
+
+        // Add spacing before 2nd or later tables
+        if (tblSeq > 1) {
+            var div = this._getElementByID("div_" + tableName + "_" + tblSeq, tableDoc);
+            if (div) {
+                div.setAttribute("style", "padding-top: 50px");
+            }
+        }
+
+        // Create the pre-table fields
+        var preTblDiv = this._getElementByID("preTableDiv_" + tableName + "_" + tblSeq, tableDoc);
+        if (!preTblDiv) {
+            this._logError(
+                "Node with id '" + "preTableDiv_" + tableName + "_" + tblSeq + "' not found."
+            );
+        } else {
+            this.addFieldElements(tableDoc, preTblDiv, tblSeq, preTableFields, tableObj.preFields);
+        }
+
+        // Add any rows that already exist
+        var tableRows = tableObj.rows;
+        if (tableRows.length == 0) {
+            tableRows.push([]);
+        }
+        var table = this._getElementByID(tableName + "_" + tblSeq, tableDoc);
+        if (!table) {
+            this._logError("Node with id '" + tableName + "_" + tblSeq + "' not found.");
+        } else {
+            var tblBody = this._buildTableHeader(
+                tableDoc,
+                table,
+                tableFields,
+                addRowButton,
+                tblSeq
+            );
+            var rowSeq = 0;
+            for (var rIdx = 0; rIdx < tableRows.length; rIdx++) {
+                var tableRow = tableRows[rIdx];
+
+                if (!tableRow || tableRow === "") {
+                    continue;
+                }
+                rowSeq++;
+                this._setRowCurrentValues(tableRow, tableFields);
+                this._addRow(tableDoc, tblBody, tblSeq, rowSeq, tableFields);
+            }
+        }
+
+        // Create the post-table fields
+        var postTblDiv = this._getElementByID("postTableDiv_" + tableName + "_" + tblSeq, tableDoc);
+        if (!postTblDiv) {
+            this._logError(
+                "Node with id '" + "postTableDiv_" + tableName + "_" + tblSeq + "' not found."
+            );
+        } else {
+            this.addFieldElements(
+                tableDoc,
+                postTblDiv,
+                tblSeq,
+                postTableFields,
+                tableObj.postFields
+            );
+        }
+        return tableDoc;
+    },
+
+    _buildTableHeader: function(tableDoc, table, tableFields, addRowButton, tblSeq) {
+        tableDoc.setCurrent(table);
+
+        // Create the header row
+        var header = this.htmlUtils.createDocumentElement(tableDoc, "thead", {
+            "class": "thead-default",
+            "style": "background-color: darkgrey"
+        });
+        tableDoc.setCurrent(header);
+        var row = this.htmlUtils.createDocumentElement(tableDoc, "tr", {});
+
+        for (i = 0; i < tableFields.length; i++) {
+            var field = tableFields[i];
+            // The remove button column header is replaced with the Add button
+            if (field.id == "remove") {
+                continue;
+            } else {
+                if (!this._useField(field, tblSeq)) {
+                    continue;
+                }
+                this._addHeaderCell(tableDoc, row, tblSeq, field);
+            }
+        }
+
+        tableDoc.setCurrent(table);
+        return this.htmlUtils.createDocumentElement(tableDoc, "tbody", {
+            "style": "background-color: lightgrey"
+        });
+    },
+
+    addFieldElements: function(tableDoc, tableFieldDiv, tblSeq, tableFields, savedFields) {
+        if (savedFields) {
+            this._setCurrentFieldValues(tableFields, savedFields);
+        }
+
+        for (var i = 0; i < tableFields.length; i++) {
+            var field = tableFields[i];
+
+            if (!this._useField(field, tblSeq)) {
+                continue;
+            }
+            this._addFieldElement(tableDoc, tableFieldDiv, field, tblSeq);
+            this._setFieldValue(tableDoc, field, tblSeq);
+        }
+    },
+
+    _addFieldElement: function(parentXMLDoc, parentElement, field, tblSeq) {
+        var fieldHTML = field.renderHTML.replace(
+            new RegExp(CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER, "gi"),
+            tblSeq
+        );
+        this._appendHTMLString(fieldHTML, parentXMLDoc, parentElement);
+    },
+
+    _addColumnElement: function(parentXMLDoc, parentElement, field, tblSeq, rowSeq) {
+        var fieldHTML = field.renderHTML.replace(
+            new RegExp(CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER, "gi"),
+            tblSeq
+        );
+        fieldHTML = fieldHTML.replace(
+            new RegExp(CatTblVarUtils.ROW_SEQ_PLACE_HOLDER, "gi"),
+            rowSeq
+        );
+        this._appendHTMLString(fieldHTML, parentXMLDoc, parentElement);
+    },
+
+    _addHeaderCell: function(parentXMLDoc, parentElement, tblSeq, field) {
+        var hTML = field.labelHTML.replace(
+            new RegExp(CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER, "gi"),
+            tblSeq
+        );
+        this._appendHTMLString(hTML, parentXMLDoc, parentElement);
+    },
+
+    _addRow: function(tableDoc, tblBody, tblSeq, rowSeq, tableFields) {
+        tableDoc.setCurrent(tblBody);
+        var row = this.htmlUtils.createDocumentElement(tableDoc, "tr", {
+            row_seq: rowSeq
+        });
+
+        for (var i = 0; i < tableFields.length; i++) {
+            var field = tableFields[i];
+            if (field.id == "remove") {
+                continue;
+            }
+            if (!this._useField(field, tblSeq)) {
+                continue;
+            }
+            this._addColumnElement(tableDoc, row, field, tblSeq, rowSeq);
+            this._setCellValue(tableDoc, field, tblSeq, rowSeq);
+        }
+    },
+
+    _useField: function(field, tableIdx) {
+        // If this field is only on the first table and this is not the first table then skip it
+        // If this field is not to be on the first table and this is the first table then skip it
+        if (field.show !== "" && field.show != "always") {
+            if (field.show == "first" && tableIdx > 1) {
+                return false;
+            } else if (field.show == "not_first" && tableIdx == 1) {
+                return false;
+            }
+        }
+        return true;
+    },
+
+    _appendHTMLString: function(htmlStr, parentXMLDoc, parentElement) {
+        var doc = new GlideXMLDocument();
+        if (doc.parse(htmlStr)) {
+            this._appendElement(doc.getDocumentElement(), parentXMLDoc, parentElement);
+        } else {
+            this._logError("Could not parse html=" + htmlStr);
+        }
+    },
+
+    _appendElement: function(element, parentXMLDoc, parentElement) {
+        parentXMLDoc.importElementToParent(element, parentElement);
+    },
+
+    _getElement: function(xPath, xmlDoc) {
+        return xmlDoc.selectSingleNode(xPath);
+    },
+
+    _getElementByID: function(id, xmlDoc) {
+        return xmlDoc.selectSingleNode("//*[@id='" + id + "']");
+    },
+
+    _setCellValue: function(xmlDoc, field, tableSeq, rowSeq) {
+        var fldID = field.id + "." + tableSeq + "." + rowSeq;
+        this._setValue(xmlDoc, fldID, field);
+    },
+
+    _setFieldValue: function(xmlDoc, field, tableSeq) {
+        var fldID = field.id + "." + tableSeq + "";
+        this._setValue(xmlDoc, fldID, field);
+    },
+
+    _setValue: function(xmlDoc, fieldID, field) {
+        var display = decodeURIComponent(field.display);
+        // Textarea's need a text node
+        if (field.type == "multiline_text") {
+            this._setText(xmlDoc, fieldID, display);
+        } else {
+            this._setElementAttribute(xmlDoc, fieldID, "value", display);
+        }
+    },
+
+    _setElementAttribute: function(xmlDoc, fieldID, attrName, value) {
+        var fieldElement = this._getElementByID(fieldID, xmlDoc);
+
+        if (!fieldElement) {
+            this._logError("No element with id " + fieldID + " found.");
+        } else {
+            xmlDoc.setCurrent(fieldElement);
+            xmlDoc.setAttribute(attrName, value);
+        }
+    },
+
+    _setText: function(xmlDoc, fieldID, value) {
+        var fieldElement = this._getElementByID(fieldID, xmlDoc);
+
+        if (!fieldElement) {
+            this._logError("No element with id " + fieldID + " found.");
+        } else {
+            xmlDoc.setText(fieldElement, value);
+        }
+    },
+
+    _setCurrentFieldValues: function(tableFields, savedFields) {
+        for (var j = 0; j < tableFields.length; j++) {
+            var tableField = tableFields[j];
+            tableField.value = "";
+            tableField.display = "";
+            for (var i = 0; i < savedFields.length; i++) {
+                var savedField = savedFields[i];
+                if (tableField.id == savedField.id) {
+                    tableField.value = savedField.value;
+                    tableField.display = savedField.display;
+                    break;
+                }
+            }
+        }
+    },
+
+    _setRowCurrentValues: function(cells, tableFields) {
+        for (var j = 0; j < tableFields.length; j++) {
+            var tableField = tableFields[j];
+            tableField.value = "";
+            tableField.display = "";
+            for (var i = 0; i < cells.length; i++) {
+                var cell = cells[i];
+                if (tableField.id == cell.id) {
+                    tableField.value = cell.value;
+                    tableField.display = cell.display;
+                    break;
+                }
+            }
+        }
+    },
+
+    _log: function(msg) {
+        if (CatTblVarUtils.DEBUG) {
+            gs.info(msg);
+        }
+    },
+
+    _logError: function(msg) {
+        gs.error(msg);
+    },
+
+    type: "CatTblVarStatic"
+};
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-01-15 18:56:29</sys_created_on>
+        <sys_id>138394bbdb230300768670adbf9619b2</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>CatTblVarStatic</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_script_include_138394bbdb230300768670adbf9619b2</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-08-03 00:18:34</sys_updated_on>
+    </sys_script_include>
+</record_update>

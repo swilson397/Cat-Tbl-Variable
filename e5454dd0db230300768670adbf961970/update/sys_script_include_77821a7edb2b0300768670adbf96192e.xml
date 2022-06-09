@@ -2,7 +2,7 @@
     <sys_script_include action="INSERT_OR_UPDATE">
         <access>public</access>
         <active>true</active>
-        <api_name>x_58056_cat_tbl_var.CatTblVarHelper</api_name>
+        <api_name>x_58056_cat_tbl_va.CatTblVarHelper</api_name>
         <caller_access/>
         <client_callable>true</client_callable>
         <description/>
@@ -52,7 +52,7 @@ CatTblVarHelper.hasCatalogTableVariables = function(catItemSysID) {
     return false;
 };
 
-CatTblVarHelper.getSCTableData = function(catItemSysID, reqItemID) {
+CatTblVarHelper.getSCTableData = function(catItemSysID, reqItemID, isSP) {
     var utils = new CatTblVarUtils();
     var serializedTable = '';
     var data = [];
@@ -80,7 +80,7 @@ CatTblVarHelper.getSCTableData = function(catItemSysID, reqItemID) {
                 serializedTable = reqItemGR.variables[resultVarName];
             }
             var tblID = svtGR.sys_id.toString();
-            var props = utils.getTableProperties(tblID, disableTable);
+            var props = utils.getTableProperties(tblID, disableTable, isSP);
             data.push({
                         "tableData" : props,
                         "serializeTable" : serializedTable
@@ -191,13 +191,13 @@ CatTblVarHelper.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-01-13 01:37:24</sys_created_on>
         <sys_id>77821a7edb2b0300768670adbf96192e</sys_id>
-        <sys_mod_count>6</sys_mod_count>
+        <sys_mod_count>7</sys_mod_count>
         <sys_name>CatTblVarHelper</sys_name>
         <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
         <sys_update_name>sys_script_include_77821a7edb2b0300768670adbf96192e</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-01-17 01:33:27</sys_updated_on>
+        <sys_updated_on>2022-06-01 20:52:01</sys_updated_on>
     </sys_script_include>
 </record_update>

@@ -3,2098 +3,1980 @@
         <active>true</active>
         <description/>
         <global>false</global>
-        <name>x_58056_cat_tbl_var.SCTblVar</name>
-        <script><![CDATA[(function(global, factory) {
-    typeof define === "function" && define.amd ? define(["jquery"], factory) : null;
-    typeof exports === "object" ? factory(require("jquery")) : null;
-    // Neither AMD or CommonJS used. Use global variables.
-    if (!jQuery) {
-        throw new Error("SCTV requires jQuery to be loaded first");
-    }
-    if (!acn_sctv_dateUtils) {
-        throw new Error("SCTV requires STV Date Utils");
-    }
-    global.acn_sc_table_variable = factory(global.jQuery, global.acn_sctv_dateUtils);
+        <ignore_in_now_experience>false</ignore_in_now_experience>
+        <name>x_58056_cat_tbl_va.SCTblVar</name>
+        <script><![CDATA[(function (global, factory) {
+  typeof define === "function" && define.amd ? define(["jquery"], factory) : null;
+  typeof exports === "object" ? factory(require("jquery")) : null;
+  // Neither AMD or CommonJS used. Use global variables.
+  if (!jQuery) {
+    throw new Error("SCTV requires jQuery to be loaded first");
+  }
+  if (!acn_sctv_dateUtils) {
+    throw new Error("SCTV requires STV Date Utils");
+  }
+  global.acn_sc_table_variable = factory(global.jQuery, global.acn_sctv_dateUtils);
 
-    var CatTblVar = function() {
-        this.getSCVarTblObject = function(resultVarSysId) {
-            return acn_sc_table_variable.getTableFromVarID(resultVarSysId);
-        };
+  var CatTblVar = function () {
+    this.getSCVarTblObject = function (resultVarSysId) {
+      return acn_sc_table_variable.getTableFromVarID(resultVarSysId);
+    };
+  };
+
+  global.CatTblVar = new CatTblVar();
+})(this, function (jq, dateTimeUtils) {
+  CatTblVarBuilder = function () {
+    var tables = {};
+    var varNames = {};
+    var varIDs = {};
+    var CTV = this;
+
+    CTV.buildTable = function (tableData, tableAnchorElement) {
+      var instance = new CatTblVarInstance();
+      tables[tableData.tableProperties.tbl_sys_id] = instance;
+      varNames[tableData.tableProperties.resultVariable.name] = tableData.tableProperties.tbl_sys_id;
+      varIDs[tableData.tableProperties.resultVariable.sys_id] = tableData.tableProperties.tbl_sys_id;
+
+      instance.renderTable(tableData, tableAnchorElement);
+      return instance;
     };
 
-    global.CatTblVar = new CatTblVar();
-})(this, function(jq, dateTimeUtils) {
-    CatTblVarBuilder = function() {
-        var tables = {};
-        var varNames = {};
-        var varIDs = {};
-        var CTV = this;
-
-        CTV.buildTable = function(tableData, tableAnchorElement) {
-            var instance = new CatTblVarInstance();
-            tables[tableData.tableProperties.tbl_sys_id] = instance;
-            varNames[tableData.tableProperties.resultVariable.name] =
-                tableData.tableProperties.tbl_sys_id;
-            varIDs[tableData.tableProperties.resultVariable.sys_id] =
-                tableData.tableProperties.tbl_sys_id;
-
-            instance.renderTable(tableData, tableAnchorElement);
-            return instance;
-        };
-
-        CTV.handleEvent = function(tblID, control, eventName, fieldName) {
-            var instance = "";
-            if (tblID in tables) {
-                instance = tables[tblID];
-            } else {
-                alert("Table not found.");
-                return;
-            }
-            instance.handleEvent(control, eventName, fieldName);
-        };
-
-        CTV.getTable = function(tblID) {
-            if (tblID in tables) {
-                return tables[tblID];
-            }
-            return null;
-        };
-
-        CTV.getTableFromVarName = function(varName) {
-            if (varName in varNames) {
-                return CTV.getTable(varNames[varNames]);
-            }
-            return null;
-        };
-
-        CTV.getTableFromVarID = function(varID) {
-            if (varID in varIDs) {
-                return CTV.getTable(varIDs[varID]);
-            }
-            // For older versions that passed in the
-            // variable name
-            if (varID in varNames) {
-                return CTV.getTable(varNames[varID]);
-            }
-            return null;
-        };
+    CTV.handleEvent = function (tblID, control, eventName, fieldName) {
+      var instance = "";
+      if (tblID in tables) {
+        instance = tables[tblID];
+      } else {
+        alert("Table not found.");
+        return;
+      }
+      instance.handleEvent(control, eventName, fieldName);
     };
 
-    CatTblVarInstance = function() {
-        this._mandatoryLabelProps = {
-            class: "fa fa-asterisk mandatory required-marker",
-            title: "Mandatory - must be populated before Submit",
-            oclass: "mandatory",
-            mandatory: "true"
-        };
-        this._fieldGroupContainerClasses = "vsplit col-sm-6";
-        this._fieldContainerClasses =
-            "col-xs-12 col-sm-12 col-md-9 col-lg-7 form-field input_controls";
-        this._fieldLabelClasses = "col-xs-12 col-md-3 col-lg-4 control-label";
-        this._tableSectionClasses = "section-content form-horizontal";
-        this.TABLE_SEQ_PLACE_HOLDER = "zzz__TABLESEQ__zzz";
-        this.ROW_SEQ_PLACE_HOLDER = "zzz__ROWSEQ__zzz";
-        this._debug = true;
-
-        this.csTblVar = this;
-        this.events = {};
-        this.userDateTimeFormat = g_user_date_time_format;
-        this.userDateFormat = g_user_date_format;
-        this.requiredTableFields = [];
-        this.requiredPreFields = [];
-        this.requiredPostFields = [];
-        this.doCheckMandatory = true;
-        this.setRowFocus = false;
-        this.catalogForm = true;
-        this.isSP = false;
-        this.tableData = null;
-        this.tableAnchorElement = null;
+    CTV.getTable = function (tblID) {
+      if (tblID in tables) {
+        return tables[tblID];
+      }
+      return null;
     };
 
-    CatTblVarInstance.prototype = {
-        renderTable: function(tableData, tableAnchorElement) {
-            this.tableData = tableData;
+    CTV.getTableFromVarName = function (varName) {
+      if (varName in varNames) {
+        return CTV.getTable(varNames[varNames]);
+      }
+      return null;
+    };
 
-            this.tableAnchorElement = tableAnchorElement;
-            if (!(tableAnchorElement instanceof jQuery)) {
-                this.tableAnchorElement = jq(tableAnchorElement);
+    CTV.getTableFromVarID = function (varID) {
+      if (varID in varIDs) {
+        return CTV.getTable(varIDs[varID]);
+      }
+      // For older versions that passed in the
+      // variable name
+      if (varID in varNames) {
+        return CTV.getTable(varNames[varID]);
+      }
+      return null;
+    };
+  };
+
+  CatTblVarInstance = function () {
+    this._mandatoryLabelProps = {
+      class: "fa fa-asterisk mandatory required-marker",
+      title: "Mandatory - must be populated before Submit",
+      oclass: "mandatory",
+      mandatory: "true",
+    };
+    this._fieldGroupContainerClasses = "vsplit col-sm-6";
+    this._fieldContainerClasses = "col-xs-12 col-sm-12 col-md-9 col-lg-7 form-field input_controls";
+    this._fieldLabelClasses = "col-xs-12 col-md-3 col-lg-4 control-label";
+    this._tableSectionClasses = "section-content form-horizontal";
+    this.TABLE_SEQ_PLACE_HOLDER = "zzz__TABLESEQ__zzz";
+    this.ROW_SEQ_PLACE_HOLDER = "zzz__ROWSEQ__zzz";
+    this._debug = true;
+
+    this.csTblVar = this;
+    this.events = {};
+    this.userDateTimeFormat = g_user_date_time_format;
+    this.userDateFormat = g_user_date_format;
+    this.requiredTableFields = [];
+    this.requiredPreFields = [];
+    this.requiredPostFields = [];
+    this.doCheckMandatory = true;
+    this.setRowFocus = false;
+    this.catalogForm = true;
+    this.isSP = false;
+    this.tableData = null;
+    this.tableAnchorElement = null;
+  };
+
+  CatTblVarInstance.prototype = {
+    renderTable: function (tableData, tableAnchorElement) {
+      this.tableData = tableData;
+
+      this.tableAnchorElement = tableAnchorElement;
+      if (!(tableAnchorElement instanceof jQuery)) {
+        this.tableAnchorElement = jq(tableAnchorElement);
+      }
+
+      if (this.tableData.status == "error") {
+        alert(this.tableData.message);
+        return;
+      }
+
+      if (!tableAnchorElement) {
+        alert("ERROR Missing anchor parameter. Cannot render table variable.");
+        return null;
+      }
+
+      var tableContainer = this.getElementByID(this.tableData.tableProperties.tableName);
+      if (tableContainer) {
+        alert("ERROR Tables has already been rendered.");
+        return null;
+      }
+
+      // Add this object to the table marker
+      this.tableAnchorElement.prop("cattblvar", this);
+
+      this.tableSysID = tableData.tableProperties.tbl_sys_id;
+
+      if ("isCatalogForm" in this.tableData) {
+        this.catalogForm = tableData.isCatalogForm;
+      }
+
+      if ("isSP" in this.tableData) {
+        this.isSP = this.tableData.isSP;
+      }
+
+      if ("loadCSS" in this.tableData) {
+        jq("head").append("<style>" + this.tableData.loadCSS + "</style>");
+      }
+
+      this._renderTable();
+    },
+
+    initialize: function (serializedTable) {
+      this.isOnLoad = true;
+      // If no data saved for table then just
+      // show an empty one
+      if (serializedTable && serializedTable != "" && serializedTable != "[]") {
+        this._initializeTable(serializedTable);
+      }
+      this.isOnLoad = false;
+
+      if (this.isDisabled) {
+        this.disableAllRows();
+      }
+    },
+
+    deleteTable: function (tblSeq) {
+      var div = this.getElementByID("div_" + this.tableName + "_" + tblSeq, this.getTableMarker());
+      if (div) {
+        div.remove();
+      }
+      var tables = this._getTables();
+      if (tables.length == 0) {
+        this.addTableClicked();
+      }
+    },
+
+    addRow: function (table) {
+      if (!table) {
+        return;
+      }
+      var rowCounter = table.attr("table_rows");
+      var tblSeq = table.attr("table_seq");
+
+      try {
+        var row = this._createDocumentElement("tr");
+        row.appendTo(table.find("tbody:last"));
+
+        rowCounter++;
+        table.attr("table_rows", rowCounter);
+
+        var rowID = tblSeq + "." + rowCounter;
+        row.attr("row_seq", rowCounter);
+
+        var cellIdx = 0;
+
+        for (var i = 0; i < this.tableFields.length; i++) {
+          var field = this.tableFields[i];
+          if (field.id == "remove" && this.isDisabled) {
+            continue;
+          }
+
+          if (!this._useField(field, tblSeq)) {
+            continue;
+          }
+          this._createTableElement(row, tblSeq, rowCounter, field);
+
+          // Set the required field marker for the column
+          var tableElement = this.getElementByID(field.id + "." + tblSeq + "." + rowCounter, table);
+          if (tableElement) {
+            if (tableElement instanceof jQuery) {
+              tableElement = tableElement.get(0);
             }
+            this._checkIfElementHasValue(field.id, tblSeq, rowCounter);
+          }
 
-            if (this.tableData.status == "error") {
-                alert(this.tableData.message);
-                return;
-            }
+          cellIdx++;
+        }
 
-            if (!tableAnchorElement) {
-                alert("ERROR Missing anchor parameter. Cannot render table variable.");
-                return null;
-            }
+        // Only set field focus if the table is being shown
+        if (this._isVisible(table)) {
+          // Set the row focus if the add row button was clicked
+          // or
+          // if there is no pre field to focus on (when a table is loaded)
+          if (this.setRowFocus && this.rowFocusField) {
+            var focusField = this.tableFields[this.rowFocusField.index].id + "." + rowID;
+            setTimeout(this.focusOnField.bind(this, focusField), 3000);
+          }
+        }
 
-            var tableContainer = this.getElementByID(this.tableData.tableProperties.tableName);
-            if (tableContainer) {
-                alert("ERROR Tables has already been rendered.");
-                return null;
-            }
+        if (!this.isDisabled) {
+          this.handleOnRowAddEvent(rowID, this.isOnLoad);
+        }
+      } catch (ex) {
+        this._handle_exception("addRow", ex);
+      }
+      return rowCounter;
+    },
 
-            // Add this object to the table marker
-            this.tableAnchorElement.prop("cattblvar", this);
+    setValue: function (fieldName, value, displayValue, tblSeq, rowNbr) {
+      var id = fieldName + "." + tblSeq;
+      if (rowNbr) {
+        id += "." + rowNbr;
+        field = this._getFieldDefinition(this.tableFields, fieldName);
+      } else {
+        field = this._getFieldDefinition(this.preTableFields, fieldName);
+        if (!field) {
+          field = this._getFieldDefinition(this.postTableFields, fieldName);
+        }
+      }
+      if (!field) {
+        alert("ERROR: No field definition found for field name " + fieldName);
+        return;
+      }
+      field.value = value;
+      field.display = displayValue;
+      var fieldElement = this._setValue(field, tblSeq, rowNbr);
+      if (fieldElement && !this.isDisabled) {
+        fieldElement.change();
+      }
+    },
 
-            this.tableSysID = tableData.tableProperties.tbl_sys_id;
+    disableTableRow: function (tblSeq, rowNbr) {
+      try {
+        for (var fIdx = 0; fIdx < this.tableFields.length; fIdx++) {
+          var field = this.tableFields[fIdx];
 
-            if ("isCatalogForm" in this.tableData) {
-                this.catalogForm = tableData.isCatalogForm;
-            }
+          if (!this._useField(field, tblSeq)) {
+            continue;
+          }
+          this.disableElement(field.id + "." + tblSeq + "." + rowNbr, field.type, true);
+        }
+      } catch (ex) {
+        this._handle_exception("disableTableRow", ex);
+      }
+    },
 
-            if ("isSP" in this.tableData) {
-                this.isSP = this.tableData.isSP;
-            }
+    setMandatoryCheck: function (bool) {
+      this.doCheckMandatory = bool;
+    },
 
-            if ("loadCSS" in this.tableData) {
-                jq("head").append("<style>" + this.tableData.loadCSS + "</style>");
-            }
+    isValidDate: function (ctl) {
+      var dateVal = ctl.value;
+      if (dateVal && dateVal !== "" && !isDate(dateVal, this.userDateTimeFormat)) {
+        alert("Invalid date value");
+        ctl.focus();
+        ctl.select();
+        return false;
+      }
+      return true;
+    },
 
-            this._renderTable();
-        },
+    getRowCount: function (table) {
+      return this._getTableRows(table).length;
+    },
 
-        initialize: function(serializedTable) {
-            this.isOnLoad = true;
-            // If no data saved for table then just
-            // show an empty one
-            if (serializedTable && serializedTable != "" && serializedTable != "[]") {
-                this._initializeTable(serializedTable);
-            }
-            this.isOnLoad = false;
-
-            if (this.isDisabled) {
-                this.disableAllRows();
-            }
-        },
-
-        deleteTable: function(tblSeq) {
-            var div = this.getElementByID(
-                "div_" + this.tableName + "_" + tblSeq,
-                this.getTableMarker()
-            );
-            if (div) {
-                div.remove();
-            }
-            var tables = this._getTables();
-            if (tables.length == 0) {
-                this.addTableClicked();
-            }
-        },
-
-        addRow: function(table) {
-            if (!table) {
-                return;
-            }
-            var rowCounter = table.attr("table_rows");
-            var tblSeq = table.attr("table_seq");
-
-            try {
-                var row = this._createDocumentElement("tr");
-                row.appendTo(table.find("tbody:last"));
-
-                rowCounter++;
-                table.attr("table_rows", rowCounter);
-
-                var rowID = tblSeq + "." + rowCounter;
-                row.attr("row_seq", rowCounter);
-
-                var cellIdx = 0;
-
-                for (var i = 0; i < this.tableFields.length; i++) {
-                    var field = this.tableFields[i];
-                    if (field.id == "remove" && this.isDisabled) {
-                        continue;
-                    }
-
-                    if (!this._useField(field, tblSeq)) {
-                        continue;
-                    }
-                    this._createTableElement(row, tblSeq, rowCounter, field);
-
-                    // Set the required field marker for the column
-                    var tableElement = this.getElementByID(
-                        field.id + "." + tblSeq + "." + rowCounter,
-                        table
-                    );
-                    if (tableElement) {
-                        if (tableElement instanceof jQuery) {
-                            tableElement = tableElement.get(0);
-                        }
-                        this._checkIfElementHasValue(field.id, tblSeq, rowCounter);
-                    }
-
-                    cellIdx++;
-                }
-
-                // Only set field focus if the table is being shown
-                if (this._isVisible(table)) {
-                    // Set the row focus if the add row button was clicked
-                    // or
-                    // if there is no pre field to focus on (when a table is loaded)
-                    if (this.setRowFocus && this.rowFocusField) {
-                        var focusField =
-                            this.tableFields[this.rowFocusField.index].id + "." + rowID;
-                        setTimeout(this.focusOnField.bind(this, focusField), 3000);
-                    }
-                }
-
-                if (!this.isDisabled) {
-                    this.handleOnRowAddEvent(rowID, this.isOnLoad);
-                }
-            } catch (ex) {
-                this._handle_exception("addRow", ex);
-            }
-            return rowCounter;
-        },
-
-        setValue: function(fieldName, value, displayValue, tblSeq, rowNbr) {
-            var id = fieldName + "." + tblSeq;
-            if (rowNbr) {
-                id += "." + rowNbr;
-                field = this._getFieldDefinition(this.tableFields, fieldName);
-            } else {
-                field = this._getFieldDefinition(this.preTableFields, fieldName);
-                if (!field) {
-                    field = this._getFieldDefinition(this.postTableFields, fieldName);
-                }
-            }
-            if (!field) {
-                alert("ERROR: No field definition found for field name " + fieldName);
-                return;
-            }
-            field.value = value;
-            field.display = displayValue;
-            var fieldElement = this._setValue(field, tblSeq, rowNbr);
-            if (fieldElement && !this.isDisabled) {
-                fieldElement.change();
-            }
-        },
-
-        disableTableRow: function(tblSeq, rowNbr) {
-            try {
-                for (var fIdx = 0; fIdx < this.tableFields.length; fIdx++) {
-                    var field = this.tableFields[fIdx];
-
-                    if (!this._useField(field, tblSeq)) {
-                        continue;
-                    }
-                    this.disableElement(field.id + "." + tblSeq + "." + rowNbr, field.type, true);
-                }
-            } catch (ex) {
-                this._handle_exception("disableTableRow", ex);
-            }
-        },
-
-        setMandatoryCheck: function(bool) {
-            this.doCheckMandatory = bool;
-        },
-
-        isValidDate: function(ctl) {
-            var dateVal = ctl.value;
-            if (dateVal && dateVal !== "" && !isDate(dateVal, this.userDateTimeFormat)) {
-                alert("Invalid date value");
-                ctl.focus();
-                ctl.select();
-                return false;
-            }
+    disableAllRows: function () {
+      var i;
+      try {
+        var tables = this._getTables();
+        for (i = 0; i < tables.length; i++) {
+          var table = tables[i];
+          // We only want tables with our table seq specified
+          // Any pre table fields might also be in a table
+          var seq = table.attr("table_seq");
+          if (!seq) {
             return true;
-        },
+          }
 
-        getRowCount: function(table) {
-            return this._getTableRows(table).length;
-        },
+          // Hide image buttons for creating duplicate tables
+          this.hideAnElement("add_table." + seq, true);
+          this.hideAnElement("delete_table." + seq, true);
 
-        disableAllRows: function() {
-            var i;
+          // Hide the Add Row button on the table
+          var addRow = this.getElementByID("add." + seq + ".", table);
+          if (addRow && this._isVisible(addRow)) {
+            addRow.toggle();
+          }
+
+          // Disable all pre table fields
+          this.disableFields(this.preTableFields, seq);
+
+          // Disable all post table fields
+          this.disableFields(this.postTableFields, seq);
+
+          // Disable all table rows
+          var rows = this._getTableRows(table);
+          for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            var rowSeq = row.attr("row_seq");
+            this.disableTableRow(seq, rowSeq);
+          }
+        }
+      } catch (ex) {
+        this._handle_exception("disableAllRows", ex);
+      }
+    },
+
+    getTableAndRowFromElement: function (element) {
+      var jQE = jq(element);
+      return this._getTableAndRowFromElement(jQE);
+    },
+
+    _getTableAndRowFromElement: function (jQE) {
+      // All id's have a format of fieldname.tblSeq.rowNumber.
+      // Non table fields won't have a .rowNumber
+      var id = jQE.attr("id");
+      if (id.substr(0, 3) == "ni.") {
+        id = id.substr(3);
+      }
+      var parts = id.split(".");
+
+      var elementParts = {};
+      elementParts.fieldName = parts[0];
+      elementParts.tblSeq = null;
+      elementParts.rowNumber = null;
+
+      if (parts.length > 1) {
+        elementParts.tblSeq = parts[1];
+        if (parts.length > 2) {
+          elementParts.rowNumber = parts[2];
+        }
+      }
+      return elementParts;
+    },
+
+    getPreviousRowID: function (element) {
+      var elementParts = this.getTableAndRowFromElement(element);
+
+      var el = this._getElementUp(element, "td");
+      if (el) {
+        var row = this._getElementUp(el, "tr");
+        if (row && row != undefined) {
+          var prevRow = row.prev();
+          if (prevRow != undefined && prevRow.attr("row_seq")) {
+            return elementParts.tblSeq + "." + prevRow.attr("row_seq");
+          }
+        }
+      }
+      return null;
+    },
+
+    getNextRowID: function (cell) {
+      var elementParts = this.getTableAndRowFromElement(cell);
+
+      var row = this._getElementUp(cell, "tr");
+      if (row && row != undefined) {
+        var nextRow = row.next();
+        if (nextRow != undefined && nextRow.attr("row_seq")) {
+          return elementParts.tblSeq + "." + prevRow.attr("row_seq");
+        }
+      }
+      return null;
+    },
+
+    getValue: function (fieldName, tblSeq, rowNbr) {
+      var field = null;
+      var id = fieldName + "." + tblSeq;
+      if (rowNbr) {
+        id = id + "." + rowNbr;
+        field = this._getFieldDefinition(this.tableFields, fieldName);
+      } else {
+        field = this._getFieldDefinition(this.preTableFields, fieldName);
+        if (!field) {
+          field = this._getFieldDefinition(this.postTableFields, fieldName);
+        }
+      }
+      if (!field) {
+        return fieldValue;
+      }
+
+      var valueEl = this.getElementInTable(id);
+
+      if (!valueEl) {
+        return fieldValue;
+      }
+
+      var type = field.type;
+      var fieldValue = this._getFieldValues(type, valueEl);
+      fieldValue.type = type;
+      return fieldValue;
+    },
+
+    isCatalogForm: function () {
+      return this.catalogForm;
+    },
+
+    /*
+     * Private functions
+     */
+
+    getSerializedTable: function () {
+      return JSON.stringify(this.getTableValues());
+    },
+
+    setMandatory: function (fieldID, mandatory) {
+      for (var i = 0; i < this.tableFields.length; i++) {
+        var field = this.tableFields[i];
+        if (field.id == fieldID) {
+          this._setMandatory(this.requiredTableFields, field, i, mandatory);
+          break;
+        }
+      }
+    },
+
+    hideAnElement: function (fldID, hide) {
+      var hideElement = this.getElementInTable(fldID);
+
+      if (hideElement) {
+        if (hide) {
+          hideElement.hide();
+        } else {
+          hideElement.show();
+        }
+      }
+    },
+
+    getElementByID: function (elementID, parentElement) {
+      var selector = this._formatJQID(elementID);
+      return this.getElements(selector, parentElement);
+    },
+
+    getTableDivision: function (tableID) {
+      return this.getElementInTable("div_" + tableID);
+    },
+
+    getTableElement: function (tableID) {
+      return this.getElementInTable(tableID);
+    },
+
+    getTableMarker: function () {
+      return this.tableMarker;
+    },
+
+    _renderTable: function () {
+      this.tableProperties = this.tableData.tableProperties;
+      this.tableName = this.tableProperties.tableName;
+      this.resultVariable = this.tableProperties.resultVariable.name;
+      this.allowMultiple = this.tableProperties.allowMultiple;
+      this.disableAfterOrder = this.tableProperties.disableAfterOrdered;
+      this.tableObjectName = this.tableProperties.utilName;
+      this.tableFields = this.tableData.tableColumnList;
+      this.preTableFields = this.tableData.preFieldList;
+      this.postTableFields = this.tableData.postFieldList;
+      this.requiredTableFields = this.tableData.requiredTableColumns;
+      this.requiredPreFields = this.tableData.requiredPreFields;
+      this.requiredPostFields = this.tableData.requiredPostFields;
+      this.rowFocusField = this.tableData.rowFocusField;
+      this.tableFocusField = this.tableData.tableFocusField;
+      this.isDisabled = this.tableProperties.tableIsDisabled;
+
+      this._addStyles();
+
+      this._buildTableDefinition();
+      // Show the first table and first row
+      var table = this.createTableSection(1);
+      this.addRow(table);
+    },
+
+    _buildTableDefinition: function () {
+      // this.tableAnchorElement.html(this.tableData.containerHTML);
+      this.tableAnchorElement.append(this.tableData.containerHTML);
+
+      this.tableContainer = this.getElementByID(this.tableName, this.tableAnchorElement);
+      this.tableTitle = this.getElementByID(this.tableName + "_table_title", this.tableContainer);
+      this.tableMarker = this.getElementByID(this.tableName + "_table_marker", this.tableContainer);
+
+      // Build the script library
+      this._buildScriptFunctions();
+
+      // Creat global variable for this object
+      window[this.tableObjectName] = this;
+
+      if (this.tableProperties.title != "") {
+        this.tableTitle.text(this.tableProperties.title);
+      } else {
+        this.tableTitle.css("display", "none");
+      }
+    },
+
+    _buildScriptFunctions: function () {
+      // Build the script library
+      var field;
+
+      this.onRowDelete = null;
+      if (this.tableProperties.onRowDelete != "") {
+        this.onRowDelete = new Function(
+          "tableSeq",
+          "tableUtils",
+          "onRowDelete(tableSeq, tableUtils);" + this.tableProperties.onRowDeleteScript
+        );
+      }
+
+      this.onRowAdd = null;
+      if (this.tableProperties.onRowAdd != "") {
+        this.onRowAdd = new Function(
+          "rowID",
+          "isLoading",
+          "tableUtils",
+          "onRowAdd(rowID, isLoading, tableUtils);" + this.tableProperties.onRowAddScript
+        );
+      }
+
+      for (var i = 0; i < this.tableFields.length; i++) {
+        this._buildElementScriptFunctions(this.tableFields[i]);
+      }
+
+      for (i = 0; i < this.preTableFields.length; i++) {
+        this._buildElementScriptFunctions(this.preTableFields[i]);
+      }
+
+      for (i = 0; i < this.postTableFields.length; i++) {
+        this._buildElementScriptFunctions(this.postTableFields[i]);
+      }
+    },
+
+    _buildElementScriptFunctions: function (field) {
+      if (field.onChange != "") {
+        this[field.id + "_onchange"] = new Function("control", "tableUtils", "onChange(control, tableUtils);" + field.onChangeScript);
+      }
+      if (field.onClick != "") {
+        this[field.id + "_onclick"] = new Function("control", "tableUtils", "onClick(control, tableUtils);" + field.onClickScript);
+      }
+    },
+
+    _initializeTable: function (serializedTable) {
+      // Unescape json string in case needed
+      serializedTable = decodeURIComponent(serializedTable);
+
+      var tables = JSON.parse(serializedTable);
+
+      for (var tIdx = 0; tIdx < tables.length; tIdx++) {
+        var tableObj = tables[tIdx];
+        var tblSeq = tIdx + 1;
+
+        // Look for existing table section
+        // If not found then add one
+        var table = this.getElementByID(this.tableName + "_" + tblSeq);
+        if (!table) {
+          table = this.createTableSection(tblSeq);
+        }
+
+        // Set existing values in pre table fields
+        if ("preFields" in tableObj) {
+          this._initializeFields(this.preTableFields, tableObj.preFields, tblSeq);
+        }
+
+        // Set existing values in table
+        if ("rows" in tableObj) {
+          for (var rIdx = 0; rIdx < tableObj.rows.length; rIdx++) {
+            var tableRow = tableObj.rows[rIdx];
+            var rowSeq = rIdx + 1;
+
+            if (!tableRow || tableRow == "") {
+              continue;
+            }
+
+            this._setRowCurrentValues(tableRow);
+
+            // Check if the row is already there
+            var rowCtr = table.attr("table_rows");
+            rowCtr = parseInt(rowCtr);
+            if (rowCtr < rowSeq) {
+              rowCtr = this.addRow(table);
+            }
+
             try {
-                var tables = this._getTables();
-                for (i = 0; i < tables.length; i++) {
-                    var table = tables[i];
-                    // We only want tables with our table seq specified
-                    // Any pre table fields might also be in a table
-                    var seq = table.attr("table_seq");
-                    if (!seq) {
-                        return true;
-                    }
-
-                    // Hide image buttons for creating duplicate tables
-                    this.hideAnElement("add_table." + seq, true);
-                    this.hideAnElement("delete_table." + seq, true);
-
-                    // Hide the Add Row button on the table
-                    var addRow = this.getElementByID("add." + seq + ".", table);
-                    if (addRow && this._isVisible(addRow)) {
-                        addRow.toggle();
-                    }
-
-                    // Disable all pre table fields
-                    this.disableFields(this.preTableFields, seq);
-
-                    // Disable all post table fields
-                    this.disableFields(this.postTableFields, seq);
-
-                    // Disable all table rows
-                    var rows = this._getTableRows(table);
-                    for (var i = 0; i < rows.length; i++) {
-                        var row = rows[i];
-                        var rowSeq = row.attr("row_seq");
-                        this.disableTableRow(seq, rowSeq);
-                    }
+              for (i = 0; i < this.tableFields.length; i++) {
+                var field = this.tableFields[i];
+                var fieldElement = this._setValue(field, tblSeq, rowCtr);
+                if (fieldElement && !this.isDisabled) {
+                  fieldElement.change();
                 }
+              }
             } catch (ex) {
-                this._handle_exception("disableAllRows", ex);
+              this._handle_exception("_initializeTable", ex);
             }
-        },
+          }
+        }
 
-        getTableAndRowFromElement: function(element) {
-            var jQE = jq(element);
-            return this._getTableAndRowFromElement(jQE);
-        },
+        // Set existing values in post table fiedls
+        if ("postFields" in tableObj) {
+          this._initializeFields(this.postTableFields, tableObj.postFields, tblSeq);
+        }
+      }
+    },
 
-        _getTableAndRowFromElement: function(jQE) {
-            // All id's have a format of fieldname.tblSeq.rowNumber.
-            // Non table fields won't have a .rowNumber
-            var id = jQE.attr("id");
-            if (id.substr(0, 3) == "ni.") {
-                id = id.substr(3);
+    _initializeFields: function (fields, savedFields, tblSeq) {
+      this._setCurrentFieldValues(fields, savedFields);
+
+      for (i = 0; i < fields.length; i++) {
+        var field = fields[i];
+
+        if (!this._useField(field, tblSeq)) {
+          continue;
+        }
+
+        var fieldElement = this._setValue(field, tblSeq);
+        if (fieldElement && !this.isDisabled) {
+          fieldElement.change();
+        }
+      }
+    },
+
+    addEvent: function (eventName, func) {
+      this.events[eventName] = func;
+    },
+
+    createTableSection: function (tblSeq) {
+      if (!tblSeq) {
+        tblSeq = 0;
+        var elements = this.getElements("table[id^='" + this.tableName + "_']", this.tableContainer);
+        if (elements) {
+          elements.each(function () {
+            var seq = jq(this).attr("table_seq");
+            if (seq) {
+              seq = parseInt(seq);
+              if (seq > tblSeq) {
+                tblSeq = seq;
+              }
             }
-            var parts = id.split(".");
+          });
+        }
+        tblSeq++;
+      }
 
-            var elementParts = {};
-            elementParts.fieldName = parts[0];
-            elementParts.tblSeq = null;
-            elementParts.rowNumber = null;
+      var tblSection = this.getTableMarker();
+      if (!tblSection) {
+        return;
+      }
 
-            if (parts.length > 1) {
-                elementParts.tblSeq = parts[1];
-                if (parts.length > 2) {
-                    elementParts.rowNumber = parts[2];
-                }
-            }
-            return elementParts;
-        },
+      var tableHTML = this.tableData.tableHTML.replace(new RegExp(this.TABLE_SEQ_PLACE_HOLDER, "gi"), tblSeq);
+      tblSection.append(tableHTML);
 
-        getPreviousRowID: function(element) {
-            var elementParts = this.getTableAndRowFromElement(element);
+      var div = this.getElementByID("div_" + this.tableName + "_" + tblSeq, tblSection);
 
-            var el = this._getElementUp(element, "td");
-            if (el) {
-                var row = this._getElementUp(el, "tr");
-                if (row && row != undefined) {
-                    var prevRow = row.prev();
-                    if (prevRow != undefined && prevRow.attr("row_seq")) {
-                        return elementParts.tblSeq + "." + prevRow.attr("row_seq");
-                    }
-                }
-            }
-            return null;
-        },
+      if (tblSeq > 1) {
+        if (div) {
+          div.attr("style", "padding-top: 50px");
+        }
+      }
 
-        getNextRowID: function(cell) {
-            var elementParts = this.getTableAndRowFromElement(cell);
+      // Create the pre-table fields
+      var preTblDiv = this.getElementByID("preTableDiv_" + this.tableName + "_" + tblSeq, div);
+      var focusElement = this._createFieldElements(preTblDiv, this.preTableFields, "pre", tblSeq);
 
-            var row = this._getElementUp(cell, "tr");
-            if (row && row != undefined) {
-                var nextRow = row.next();
-                if (nextRow != undefined && nextRow.attr("row_seq")) {
-                    return elementParts.tblSeq + "." + prevRow.attr("row_seq");
-                }
-            }
-            return null;
-        },
+      // Create the table and column headers
+      var table = this.getElementByID(this.tableName + "_" + tblSeq, div);
+      this._buildTableAndColumns(table, tblSeq);
 
-        getValue: function(fieldName, tblSeq, rowNbr) {
-            var field = null;
-            var id = fieldName + "." + tblSeq;
-            if (rowNbr) {
-                id = id + "." + rowNbr;
-                field = this._getFieldDefinition(this.tableFields, fieldName);
+      // Create the post-table fields
+      var postTblDiv = this.getElementByID("postTableDiv_" + this.tableName + "_" + tblSeq, div);
+      this._createFieldElements(postTblDiv, this.postTableFields, "post", tblSeq);
+
+      if (this._isVisible(table) && focusElement) {
+        focusElement.focus();
+      }
+
+      return table;
+    },
+
+    _buildTableAndColumns: function (table, tblSeq) {
+      table.attr("table_rows", 0);
+      table.attr("table_seq", tblSeq);
+
+      // Create the header row
+      var props = {
+        class: "thead-default",
+      };
+      if (this.isDisabled) {
+        props.style = "background-color: darkgrey";
+      }
+      var header = this._createDocumentElement("thead", props, table);
+      var row = this._createDocumentElement("tr", null, header);
+
+      for (i = 0; i < this.tableFields.length; i++) {
+        field = this.tableFields[i];
+        // The remove button column header is replaced with the Add button
+        if (field.id == "remove") {
+          // If the table is read only then don't show the remove column
+          if (this.isDisabled) {
+            continue;
+          }
+          if (this.tableProperties.addRowButton) {
+            this._createTableElement(row, tblSeq, "", this.tableProperties.addRowButton);
+          } else {
+            this.addHeaderCell(row, field, tblSeq);
+          }
+        } else {
+          if (!this._useField(field, tblSeq)) {
+            continue;
+          }
+          this.addHeaderCell(row, field, tblSeq);
+        }
+      }
+
+      this._createDocumentElement("tbody", null, table);
+    },
+
+    _createFieldElements: function (anchorDiv, tableFields, source, tblSeq) {
+      var focusElement = null;
+      for (var i = 0; i < tableFields.length; i++) {
+        var field = tableFields[i];
+
+        if (!this._useField(field, tblSeq)) {
+          continue;
+        }
+        var newElement = this._createFieldElement(field, tblSeq, anchorDiv);
+
+        if (this.tableFocusField && this.tableFocusField.source == source && this.tableFocusField.index == i) {
+          focusElement = newElement;
+        }
+      }
+      return focusElement;
+    },
+
+    addHeaderCell: function (row, field, tblSeq) {
+      var hTML = field.labelHTML.replace(new RegExp(this.TABLE_SEQ_PLACE_HOLDER, "gi"), tblSeq);
+      row.append(hTML);
+    },
+
+    focusOnField: function (focusField) {
+      var element = this.getElementInTable(focusField);
+      if (element) {
+        element.focus();
+      }
+    },
+
+    handleOnRowAddEvent: function (rowID, isOnLoad) {
+      if (this.onRowAdd && typeof this.onRowAdd == "function") {
+        this.onRowAdd(rowID, isOnLoad, this);
+      }
+    },
+
+    _useField: function (field, tableIdx) {
+      // If this field is only on the first table and this is not the first table then skip it
+      // If this field is not to be on the first table and this is the first table then skip it
+      if (field.show !== "" && field.show != "always") {
+        if (field.show == "first" && tableIdx > 1) {
+          return false;
+        } else if (field.show == "not_first" && tableIdx == 1) {
+          return false;
+        }
+      }
+      return true;
+    },
+
+    _setMandatory: function (requiredFields, field, fieldIdx, mandatory) {
+      field.mandatory = mandatory;
+
+      var isThere = false;
+      for (var j = 0; j < requiredFields.length; j++) {
+        var cellIdx = requiredFields[j];
+        if (cellIdx == fieldIdx) {
+          isThere = true;
+          break;
+        }
+      }
+      if (mandatory && !isThere) {
+        requiredFields.push(fieldIdx);
+      } else if (!mandatory && isThere) {
+        requiredFields.splice(j, 1);
+      }
+
+      try {
+        var label = this.getElementInTable("label." + field.id);
+        if (label) {
+          var el = this._getElementUp(label, "td");
+          if (el) {
+            if (field.mandatory) {
+              el.addClass("is-required");
             } else {
-                field = this._getFieldDefinition(this.preTableFields, fieldName);
-                if (!field) {
-                    field = this._getFieldDefinition(this.postTableFields, fieldName);
-                }
+              el.removeClass("is-required");
             }
-            if (!field) {
-                return fieldValue;
-            }
+          }
+        }
+      } catch (e) {}
 
-            var valueEl = this.getElementInTable(id);
-
-            if (!valueEl) {
-                return fieldValue;
-            }
-
-            var type = field.type;
-            var fieldValue = this._getFieldValues(type, valueEl);
-            fieldValue.type = type;
-            return fieldValue;
-        },
-
-        isCatalogForm: function() {
-            return this.catalogForm;
-        },
+      // Set the status icon on each table
+      var tables = this._getTables();
+      for (var i = 0; i < tables.length; i++) {
+        var table = tables[i];
+        var tblSeq = table.attr("table_seq");
+        if (!tblSeq) {
+          continue;
+        }
 
         /*
-                 * Private functions
-                 */
-
-        getSerializedTable: function() {
-            return JSON.stringify(this.getTableValues());
-        },
-
-        setMandatory: function(fieldID, mandatory) {
-            for (var i = 0; i < this.tableFields.length; i++) {
-                var field = this.tableFields[i];
-                if (field.id == fieldID) {
-                    this._setMandatory(this.requiredTableFields, field, i, mandatory);
-                    break;
-                }
-            }
-        },
-
-        hideAnElement: function(fldID, hide) {
-            var hideElement = this.getElementInTable(fldID);
-
-            if (hideElement) {
-                if (hide) {
-                    hideElement.hide();
-                } else {
-                    hideElement.show();
-                }
-            }
-        },
-
-        getElementByID: function(elementID, parentElement) {
-            var selector = this._formatJQID(elementID);
-            return this.getElements(selector, parentElement);
-        },
-
-        getTableDivision: function(tableID) {
-            return this.getElementInTable("div_" + tableID);
-        },
-
-        getTableElement: function(tableID) {
-            return this.getElementInTable(tableID);
-        },
-
-        getTableMarker: function() {
-            return this.tableMarker;
-        },
-
-        _renderTable: function() {
-            this.tableProperties = this.tableData.tableProperties;
-            this.tableName = this.tableProperties.tableName;
-            this.resultVariable = this.tableProperties.resultVariable.name;
-            this.allowMultiple = this.tableProperties.allowMultiple;
-            this.disableAfterOrder = this.tableProperties.disableAfterOrdered;
-            this.tableObjectName = this.tableProperties.utilName;
-            this.tableFields = this.tableData.tableColumnList;
-            this.preTableFields = this.tableData.preFieldList;
-            this.postTableFields = this.tableData.postFieldList;
-            this.requiredTableFields = this.tableData.requiredTableColumns;
-            this.requiredPreFields = this.tableData.requiredPreFields;
-            this.requiredPostFields = this.tableData.requiredPostFields;
-            this.rowFocusField = this.tableData.rowFocusField;
-            this.tableFocusField = this.tableData.tableFocusField;
-            this.isDisabled = this.tableProperties.tableIsDisabled;
-
-            this._addStyles();
-
-            this._buildTableDefinition();
-            // Show the first table and first row
-            var table = this.createTableSection(1);
-            this.addRow(table);
-        },
-
-        _buildTableDefinition: function() {
-            // this.tableAnchorElement.html(this.tableData.containerHTML);
-            this.tableAnchorElement.append(this.tableData.containerHTML);
-
-            this.tableContainer = this.getElementByID(this.tableName, this.tableAnchorElement);
-            this.tableTitle = this.getElementByID(
-                this.tableName + "_table_title",
-                this.tableContainer
-            );
-            this.tableMarker = this.getElementByID(
-                this.tableName + "_table_marker",
-                this.tableContainer
-            );
-
-            // Build the script library
-            this._buildScriptFunctions();
-
-            // Creat global variable for this object
-            window[this.tableObjectName] = this;
-
-            if (this.tableProperties.title != "") {
-                this.tableTitle.text(this.tableProperties.title);
-            } else {
-                this.tableTitle.css("display", "none");
-            }
-        },
-
-        _buildScriptFunctions: function() {
-            // Build the script library
-            var field;
-
-            this.onRowDelete = null;
-            if (this.tableProperties.onRowDelete != "") {
-                this.onRowDelete = new Function(
-                    "tableSeq",
-                    "tableUtils",
-                    "onRowDelete(tableSeq, tableUtils);" + this.tableProperties.onRowDeleteScript
-                );
-            }
-
-            this.onRowAdd = null;
-            if (this.tableProperties.onRowAdd != "") {
-                this.onRowAdd = new Function(
-                    "rowID",
-                    "isLoading",
-                    "tableUtils",
-                    "onRowAdd(rowID, isLoading, tableUtils);" + this.tableProperties.onRowAddScript
-                );
-            }
-
-            for (var i = 0; i < this.tableFields.length; i++) {
-                this._buildElementScriptFunctions(this.tableFields[i]);
-            }
-
-            for (i = 0; i < this.preTableFields.length; i++) {
-                this._buildElementScriptFunctions(this.preTableFields[i]);
-            }
-
-            for (i = 0; i < this.postTableFields.length; i++) {
-                this._buildElementScriptFunctions(this.postTableFields[i]);
-            }
-        },
-
-        _buildElementScriptFunctions: function(field) {
-            if (field.onChange != "") {
-                this[field.id + "_onchange"] = new Function(
-                    "control",
-                    "tableUtils",
-                    "onChange(control, tableUtils);" + field.onChangeScript
-                );
-            }
-            if (field.onClick != "") {
-                this[field.id + "_onclick"] = new Function(
-                    "control",
-                    "tableUtils",
-                    "onClick(control, tableUtils);" + field.onClickScript
-                );
-            }
-        },
-
-        _initializeTable: function(serializedTable) {
-            // Unescape json string in case needed
-            serializedTable = decodeURIComponent(serializedTable);
-
-            var tables = JSON.parse(serializedTable);
-
-            for (var tIdx = 0; tIdx < tables.length; tIdx++) {
-                var tableObj = tables[tIdx];
-                var tblSeq = tIdx + 1;
-
-                // Look for existing table section
-                // If not found then add one
-                var table = this.getElementByID(this.tableName + "_" + tblSeq);
-                if (!table) {
-                    table = this.createTableSection(tblSeq);
-                }
-
-                // Set existing values in pre table fields
-                if ("preFields" in tableObj) {
-                    this._initializeFields(this.preTableFields, tableObj.preFields, tblSeq);
-                }
-
-                // Set existing values in table
-                if ("rows" in tableObj) {
-                    for (var rIdx = 0; rIdx < tableObj.rows.length; rIdx++) {
-                        var tableRow = tableObj.rows[rIdx];
-                        var rowSeq = rIdx + 1;
-
-                        if (!tableRow || tableRow == "") {
-                            continue;
-                        }
-
-                        this._setRowCurrentValues(tableRow);
-
-                        // Check if the row is already there
-                        var rowCtr = table.attr("table_rows");
-                        rowCtr = parseInt(rowCtr);
-                        if (rowCtr < rowSeq) {
-                            rowCtr = this.addRow(table);
-                        }
-
-                        try {
-                            for (i = 0; i < this.tableFields.length; i++) {
-                                var field = this.tableFields[i];
-                                var fieldElement = this._setValue(field, tblSeq, rowCtr);
-                                if (fieldElement && !this.isDisabled) {
-                                    fieldElement.change();
-                                }
-                            }
-                        } catch (ex) {
-                            this._handle_exception("_initializeTable", ex);
-                        }
-                    }
-                }
-
-                // Set existing values in post table fiedls
-                if ("postFields" in tableObj) {
-                    this._initializeFields(this.postTableFields, tableObj.postFields, tblSeq);
-                }
-            }
-        },
-
-        _initializeFields: function(fields, savedFields, tblSeq) {
-            this._setCurrentFieldValues(fields, savedFields);
-
-            for (i = 0; i < fields.length; i++) {
-                var field = fields[i];
-
-                if (!this._useField(field, tblSeq)) {
-                    continue;
-                }
-
-                var fieldElement = this._setValue(field, tblSeq);
-                if (fieldElement && !this.isDisabled) {
-                    fieldElement.change();
-                }
-            }
-        },
-
-        addEvent: function(eventName, func) {
-            this.events[eventName] = func;
-        },
-
-        createTableSection: function(tblSeq) {
-            if (!tblSeq) {
-                tblSeq = 0;
-                var elements = this.getElements(
-                    "table[id^='" + this.tableName + "_']",
-                    this.tableContainer
-                );
-                if (elements) {
-                    elements.each(function() {
-                        var seq = jq(this).attr("table_seq");
-                        if (seq) {
-                            seq = parseInt(seq);
-                            if (seq > tblSeq) {
-                                tblSeq = seq;
-                            }
-                        }
-                    });
-                }
-                tblSeq++;
-            }
-
-            var tblSection = this.getTableMarker();
-            if (!tblSection) {
-                return;
-            }
-
-            var tableHTML = this.tableData.tableHTML.replace(
-                new RegExp(this.TABLE_SEQ_PLACE_HOLDER, "gi"),
-                tblSeq
-            );
-            tblSection.append(tableHTML);
-
-            var div = this.getElementByID("div_" + this.tableName + "_" + tblSeq, tblSection);
-
-            if (tblSeq > 1) {
-                if (div) {
-                    div.attr("style", "padding-top: 50px");
-                }
-            }
-
-            // Create the pre-table fields
-            var preTblDiv = this.getElementByID(
-                "preTableDiv_" + this.tableName + "_" + tblSeq,
-                div
-            );
-            var focusElement = this._createFieldElements(
-                preTblDiv,
-                this.preTableFields,
-                "pre",
-                tblSeq
-            );
-
-            // Create the table and column headers
-            var table = this.getElementByID(this.tableName + "_" + tblSeq, div);
-            this._buildTableAndColumns(table, tblSeq);
-
-            // Create the post-table fields
-            var postTblDiv = this.getElementByID(
-                "postTableDiv_" + this.tableName + "_" + tblSeq,
-                div
-            );
-            this._createFieldElements(postTblDiv, this.postTableFields, "post", tblSeq);
-
-            if (this._isVisible(table) && focusElement) {
-                focusElement.focus();
-            }
-
-            return table;
-        },
-
-        _buildTableAndColumns: function(table, tblSeq) {
-            table.attr("table_rows", 0);
-            table.attr("table_seq", tblSeq);
-
-            // Create the header row
-            var props = {
-                class: "thead-default"
-            };
-            if (this.isDisabled) {
-                props.style = "background-color: darkgrey";
-            }
-            var header = this._createDocumentElement("thead", props, table);
-            var row = this._createDocumentElement("tr", null, header);
-
-            for (i = 0; i < this.tableFields.length; i++) {
-                field = this.tableFields[i];
-                // The remove button column header is replaced with the Add button
-                if (field.id == "remove") {
-                    // If the table is read only then don't show the remove column
-                    if (this.isDisabled) {
-                        continue;
-                    }
-                    if (this.tableProperties.addRowButton) {
-                        this._createTableElement(
-                            row,
-                            tblSeq,
-                            "",
-                            this.tableProperties.addRowButton
-                        );
-                    } else {
-                        this.addHeaderCell(row, field, tblSeq);
-                    }
-                } else {
-                    if (!this._useField(field, tblSeq)) {
-                        continue;
-                    }
-                    this.addHeaderCell(row, field, tblSeq);
-                }
-            }
-
-            this._createDocumentElement("tbody", null, table);
-        },
-
-        _createFieldElements: function(anchorDiv, tableFields, source, tblSeq) {
-            var focusElement = null;
-            for (var i = 0; i < tableFields.length; i++) {
-                var field = tableFields[i];
-
-                if (!this._useField(field, tblSeq)) {
-                    continue;
-                }
-                var newElement = this._createFieldElement(field, tblSeq, anchorDiv);
-
-                if (
-                    this.tableFocusField &&
-                    this.tableFocusField.source == source &&
-                    this.tableFocusField.index == i
-                ) {
-                    focusElement = newElement;
-                }
-            }
-            return focusElement;
-        },
-
-        addHeaderCell: function(row, field, tblSeq) {
-            var hTML = field.labelHTML.replace(
-                new RegExp(this.TABLE_SEQ_PLACE_HOLDER, "gi"),
-                tblSeq
-            );
-            row.append(hTML);
-        },
-
-        focusOnField: function(focusField) {
-            var element = this.getElementInTable(focusField);
-            if (element) {
-                element.focus();
-            }
-        },
-
-        handleOnRowAddEvent: function(rowID, isOnLoad) {
-            if (this.onRowAdd && typeof this.onRowAdd == "function") {
-                this.onRowAdd(rowID, isOnLoad, this);
-            }
-        },
-
-        _useField: function(field, tableIdx) {
-            // If this field is only on the first table and this is not the first table then skip it
-            // If this field is not to be on the first table and this is the first table then skip it
-            if (field.show !== "" && field.show != "always") {
-                if (field.show == "first" && tableIdx > 1) {
-                    return false;
-                } else if (field.show == "not_first" && tableIdx == 1) {
-                    return false;
-                }
-            }
-            return true;
-        },
-
-        _setMandatory: function(requiredFields, field, fieldIdx, mandatory) {
-            field.mandatory = mandatory;
-
-            var isThere = false;
-            for (var j = 0; j < requiredFields.length; j++) {
-                var cellIdx = requiredFields[j];
-                if (cellIdx == fieldIdx) {
-                    isThere = true;
-                    break;
-                }
-            }
-            if (mandatory && !isThere) {
-                requiredFields.push(fieldIdx);
-            } else if (!mandatory && isThere) {
-                requiredFields.splice(j, 1);
-            }
-
-            try {
-                var label = this.getElementInTable("label." + field.id);
-                if (label) {
-                    var el = this._getElementUp(label, "td");
-                    if (el) {
-                        if (field.mandatory) {
-                            el.addClass("is-required");
-                        } else {
-                            el.removeClass("is-required");
-                        }
-                    }
-                }
-            } catch (e) {}
-
-            // Set the status icon on each table
-            var tables = this._getTables();
-            for (var i = 0; i < tables.length; i++) {
-                var table = tables[i];
-                var tblSeq = table.attr("table_seq");
-                if (!tblSeq) {
-                    continue;
-                }
-
-                /*
-                        * Get the status span element
-                        */
-                var span = this.getTableElement("status." + field.id + "." + tblSeq);
-                if (!span) {
-                    continue;
-                }
-
-                // Add the appropriate classes and attributes
-                if (mandatory) {
-                    span.addClass("fa fa-asterisk mandatory required-marker");
-                    span.attr("title", "Mandatory - must be populated before Submit");
-                    span.attr("oclass", "mandatory");
-                    span.attr("mandatory", "true");
-                } else {
-                    span.removeClass("fa fa-asterisk mandatory required-marker");
-                    span.attr("title", "");
-                    span.attr("oclass", "");
-                    span.attr("mandatory", "");
-                }
-
-                // Set the status filled or not filled color
-                this._checkIfElementHasValue(field.id, tblSeq, 1);
-            }
-        },
-
-        markElementAsError: function(element) {
-            if (element.data("select2")) {
-                element = element.prev("div").children("a");
-            }
-
-            element.css({
-                "background-color": this.tableData.invalid_background_color,
-                color: this.tableData.invalid_text_color
-            });
-        },
-
-        markElementAsOK: function(element) {
-            if (element.data("select2")) {
-                element = element.prev("div").children("a");
-            }
-            element.css({
-                "background-color": "",
-                color: ""
-            });
-        },
-
-        _createTableElement: function(row, tblSeq, rowSeq, field) {
-            var fieldHTML = field.renderHTML.replace(
-                new RegExp(this.TABLE_SEQ_PLACE_HOLDER, "gi"),
-                tblSeq
-            );
-            fieldHTML = fieldHTML.replace(new RegExp(this.ROW_SEQ_PLACE_HOLDER, "gi"), rowSeq);
-            row.append(fieldHTML);
-            if (!this.isDisabled) {
-                this._updateElement(field, tblSeq + "." + rowSeq, row);
-            }
-        },
-
-        _createFieldElement: function(field, tblSeq, parentElement) {
-            var fieldHTML = field.renderHTML.replace(
-                new RegExp(this.TABLE_SEQ_PLACE_HOLDER, "gi"),
-                tblSeq
-            );
-            parentElement.append(fieldHTML);
-            if (!this.isDisabled) {
-                this._updateElement(field, tblSeq, parentElement);
-            }
-        },
-
-        _updateElement: function(field, fieldSuffix, parentElement) {
-            var element = this.getElementByID(field.id + "." + fieldSuffix, parentElement);
-
-            switch (field.type) {
-                case "reference":
-                    this._setReferenceSelect2(element, field);
-                    break;
-                case "choice":
-                    this._setChoiceSelect2(element, field);
-                    if (field.select2InitOption && field.select2InitOption.length > 0) {
-                        element.select2("data", field.select2InitOption);
-                        element.change();
-                    }
-                    break;
-                case "datetime":
-                case "date":
-                    this._setDateTimeElement(element, field, fieldSuffix);
-                    break;
-                case "button":
-                case "checkbox":
-                case "multiline_text":
-                    element.blur(this.multiLineTextIsFocused.bind(this, element));
-                    element.focus(this.multiLineTextIsFocused.bind(this, element));
-                    element.keyup(this.resizeTextArea.bind(this, element));
-                    element.keydown(this.multiLineTextKeyDown.bind(this, element));
-                    break;
-                default:
-            }
-        },
-
-        _setDateTimeElement: function(element, field, fieldSuffix) {
-            var format = field.type == "datetime" ? this.userDateTimeFormat : this.userDateFormat;
-
-            var dpSelector =
-                field.type == "datetime"
-                    ? field.id + "." + fieldSuffix + "_datetimepicker"
-                    : field.id + "." + fieldSuffix + "_datepicker";
-            dpSelector = this._formatJQID(dpSelector);
-
-            var dp = jq(dpSelector)
-                .datetimepicker({
-                    keepInvalid: true,
-                    pickTime: (field.type == "datetime") === true,
-                    useCurrent: false,
-                    format: "X"
-                })
-                .on("dp.change", function(e) {
-                    var value = new Date(e.date._d);
-                    var formattedDate = dateTimeUtils.formatDate(value, format);
-                    if (formattedDate == null || formattedDate == "") {
-                        element.val(new Date());
-                        dp.data("DateTimePicker").setValue(new Date(d));
-                        return "";
-                    }
-
-                    var d = dateTimeUtils.getDateFromFormat(formattedDate, format);
-                    if (formattedDate === "" || d != 0) {
-                        element.val(formattedDate);
-                        dp.data("DateTimePicker").setValue(new Date(d));
-                        if (element.attr("value-state") == "initial") {
-                            element.attr("value-state", "");
-                        } else {
-                            element.change();
-                        }
-                    }
-                    return formattedDate;
-                });
-        },
-
-        _createDocumentElement: function(tagName, props, parentElement) {
-            var element;
-            if (props) {
-                element = jq("<" + tagName + " />", props);
-            } else {
-                element = jq("<" + tagName + " />");
-            }
-
-            if (parentElement) {
-                parentElement.append(element);
-            }
-            return element;
-        },
-
-        disableFields: function(fields, tblSeq) {
-            // Disable all fields
-            for (i = 0; i < fields.length; i++) {
-                var field = fields[i];
-                if (!this._useField(field, tblSeq)) {
-                    return;
-                }
-                this.disableElement(field.id + "." + tblSeq, field.type, true);
-            }
-        },
-
-        disableElement: function(fldID, type, disable) {
-            var elementID = fldID;
-
-            var disableElement = this.getElementInTable(elementID);
-            if (disableElement) {
-                if (type == "reference" || type == "choice") {
-                    if (disable) {
-                        disableElement.select2("disable");
-                    } else {
-                        disableElement.select2("enable");
-                    }
-                } else if (disableElement.prop("tagName").toLowerCase() == "span") {
-                    if (disable) {
-                        disableElement.css("pointer-events", "none");
-                    } else {
-                        disableElement.css("pointer-events", "auto");
-                    }
-                } else {
-                    disableElement.prop("disabled", disable);
-                    if (disable) {
-                        disableElement.parent().css("pointer-events", "none");
-                    } else {
-                        disableElement.parent().css("pointer-events", "auto");
-                    }
-                }
-            }
-        },
-
-        _getTables: function() {
-            var tables = [];
-            var tblSection = this.getTableMarker();
-            tblSection.find("table").each(function() {
-                tables.push(jq(this));
-            });
-            return tables;
-        },
-
-        _getTableRows: function(tableJQ) {
-            var rows = [];
-            tableJQ.find("tbody > tr").each(function() {
-                rows.push(jq(this));
-            });
-            return rows;
-        },
-
-        getTableValues: function() {
-            var tableArray = [];
-
-            try {
-                var tables = this._getTables();
-                for (var i = 0; i < tables.length; i++) {
-                    var table = tables[i];
-                    var seq = table.attr("table_seq");
-                    if (!seq) {
-                        return true;
-                    }
-
-                    // If the table is hidden forget it.
-                    if (!this._isVisible(table)) {
-                        return true;
-                    }
-
-                    tableObj = {};
-                    // Get pre field values
-                    tableObj.preFields = this.getFieldResults(this.preTableFields, seq);
-                    // Get post field values
-                    tableObj.postFields = this.getFieldResults(this.postTableFields, seq);
-                    // Get table row values
-                    tableObj.rows = this.getTableFieldResults(table, seq);
-
-                    tableArray.push(tableObj);
-                }
-            } catch (ex) {
-                this._handle_exception("getTableValues", ex);
-            }
-            return tableArray;
-        },
-
-        getTableFieldResults: function(tableJQ, tblSeq) {
-            var rowArray = [];
-            var rows = this._getTableRows(tableJQ);
-            for (var i = 0; i < rows.length; i++) {
-                var row = rows[i];
-                var rowSeq = row.attr("row_seq");
-                var cellArray = [];
-                for (var fIdx = 0; fIdx < this.tableFields.length; fIdx++) {
-                    var field = this.tableFields[fIdx];
-                    var obj = this._getCellObject(
-                        rowSeq,
-                        fIdx,
-                        field,
-                        this._useField(field, tblSeq),
-                        tblSeq
-                    );
-                    cellArray.push({
-                        id: obj.field,
-                        value: obj.value,
-                        display: obj.display
-                    });
-                }
-                rowArray.push(cellArray);
-            }
-            return rowArray;
-        },
-
-        getFieldResults: function(fields, tblSeq) {
-            var fieldArray = [];
-
-            for (i = 0; i < fields.length; i++) {
-                var field = fields[i];
-
-                if (!this._useField(field, tblSeq)) {
-                    return;
-                }
-                var obj = this._getFieldObject(field, tblSeq);
-                fieldArray.push({
-                    id: obj.field,
-                    value: obj.value,
-                    display: obj.display
-                });
-            }
-            return fieldArray;
-        },
-
-        _isVisible: function(element) {
-            if (!(element instanceof jQuery)) {
-                element = jq(element);
-            }
-            var isVisible = true;
-            try {
-                isVisible = element.is(":visible");
-            } catch (e) {}
-            return isVisible;
-        },
-
-        _getCellObject: function(ri, ci, field, useField, tblSeq) {
-            var fldID = field.id + "." + tblSeq + "." + ri;
-            return this._setFieldProperties(fldID, field, tblSeq);
-        },
-
-        _setFieldProperties: function(fieldID, fieldProps, tblSeq) {
-            var obj = {};
-            obj.field = fieldProps.id;
-            obj.label = fieldProps.label;
-            obj.mandatory = fieldProps.mandatory;
-            obj.type = fieldProps.type;
-            obj.giveFocus = fieldProps.giveFocus;
-            obj.reference = fieldProps.reference;
-            obj.choiceOptions = fieldProps.choiceOptions;
-            obj.refQual = fieldProps.refQual;
-            obj.acColumns = fieldProps.acColumns;
-            obj.acStartswith = fieldProps.acStartswith;
-            obj.cellCSS = fieldProps.cellCSS;
-            obj.labelCSS = fieldProps.labelCSS;
-            obj.show = fieldProps.show;
-            obj.imageSrc = fieldProps.imageSrc;
-            obj.value = "";
-            obj.display = "";
-            obj.relatedTable = "";
-            obj.disabled = false;
-
-            var type = fieldProps.type;
-
-            // If this field is not shown on this table then return empty object
-            var useField = this._useField(fieldProps, tblSeq);
-            if (!useField) {
-                return obj;
-            }
-
-            var relatedTable = "";
-            var element = this.getElementInTable(fieldID);
-            if (element) {
-                relatedTable = element.attr("related_table");
-                obj.disabled = element.is(":disabled");
-            }
-
-            var fieldValues = this._getFieldValues(type, element);
-            obj.value = fieldValues.value;
-            obj.display = fieldValues.display;
-
-            if (relatedTable && relatedTable != undefined) {
-                var table = this.getTableElement(relatedTable);
-                if (table && this._isVisible(table)) {
-                    obj.relatedTable = relatedTable;
-                }
-            }
-            return obj;
-        },
-
-        _getFieldObject: function(preField, seq) {
-            var fldID = preField.id + "." + seq + "";
-            return this._setFieldProperties(fldID, preField, seq);
-        },
-
-        getValue: function(fieldName, tblSeq, rowNbr) {
-            var field = null;
-            var id = fieldName + "." + tblSeq;
-            if (rowNbr) {
-                id = id + "." + rowNbr;
-                field = this._getFieldDefinition(this.tableFields, fieldName);
-            } else {
-                field = this._getFieldDefinition(this.preTableFields, fieldName);
-                if (!field) {
-                    field = this._getFieldDefinition(this.postTableFields, fieldName);
-                }
-            }
-            if (!field) {
-                return fieldValue;
-            }
-
-            var valueEl = this.getElementInTable(id);
-
-            if (!valueEl) {
-                return fieldValue;
-            }
-
-            var type = field.type;
-            var fieldValue = this._getFieldValues(type, valueEl);
-            fieldValue.type = type;
-            return fieldValue;
-        },
-
-        _getFieldValues: function(fieldType, fieldJQ) {
-            var fieldValues = {
-                value: "",
-                display: ""
-            };
-            if (!fieldJQ) {
-                return fieldValues;
-            }
-
-            fieldValues.value = fieldJQ.val();
-
-            if (fieldType == "checkbox") {
-                fieldValues.value = fieldJQ.is(":checked");
-                fieldValues.display = fieldJQ.is(":checked") ? "Yes" : "No";
-            } else if (fieldType == "reference" || fieldType == "choice") {
-                if (!this.isDisabled) {
-                    var data = fieldJQ.select2("data");
-                    if (data && "id" in data) {
-                        fieldValues.value = data.id;
-                        fieldValues.display = data.text;
-                    }
-                } else {
-                    fieldValues.display = fieldValues.value;
-                    fieldValues.value = fieldJQ.prop("orig_value");
-                }
-            } else if (fieldType == "multiline_text" || fieldType == "text") {
-                fieldValues.value = encodeURI(fieldValues.value.trim());
-            } else {
-                fieldValues.value = fieldValues.value.trim();
-            }
-
-            if (fieldValues.display.trim() === "") {
-                fieldValues.display = fieldValues.value;
-            }
-
-            return fieldValues;
-        },
-
-        _getFieldDefinition: function(fields, fieldName) {
-            for (var i = 0; i < fields.length; i++) {
-                var field = fields[i];
-                if (field.id == fieldName) {
-                    return field;
-                }
-            }
-            return null;
-        },
-
-        ensureMandatoryValues: function() {
-            var nbr, i, fldIdx, preField, postField, reqList, field, cellIdx;
-
-            if (!this.doCheckMandatory) {
-                return true;
-            }
-
-            var someMissing = false;
-
-            var missingList = [];
-            var prefix = "";
-
-            // Check table mandatory fields
-            try {
-                var tables = this._getTables();
-                for (var tIdx = 0; tIdx < tables.length; tIdx++) {
-                    var table = tables[tIdx];
-
-                    // We only want tables with our table seq specified
-                    // Any pre table fields might also be in a table
-                    var tblSeq = table.attr("table_seq");
-                    if (!tblSeq) {
-                        continue;
-                    }
-
-                    // If the table is hidden forget it.
-                    if (!this._isVisible(table)) {
-                        continue;
-                    }
-
-                    // Validate that all required pre fields have values
-                    someMissing =
-                        this._checkMandatoryFields(
-                            this.requiredPreFields,
-                            this.preTableFields,
-                            tblSeq,
-                            missingList
-                        ) || someMissing;
-
-                    // Validate that all required fields are filled in (except header row)
-                    var rows = this._getTableRows(table);
-                    for (var rIdx = 0; rIdx < rows.length; rIdx++) {
-                        var row = rows[rIdx];
-                        var rowSeq = row.attr("row_seq");
-
-                        for (i = 0; i < this.requiredTableFields.length; i++) {
-                            cellIdx = this.requiredTableFields[i];
-                            field = this.tableFields[cellIdx];
-
-                            if (!this._useField(field, tblSeq)) {
-                                continue;
-                            }
-
-                            var obj = this._getCellObject(rowSeq, cellIdx, field, true, tblSeq);
-                            if (obj.disabled) {
-                                continue;
-                            }
-                            prefix = "Table " + tblSeq + " - Row " + rowSeq;
-                            var jqElement = this.getElementInTable(
-                                field.id + "." + tblSeq + "." + rowSeq
-                            );
-                            if (jqElement) {
-                                someMissing = this._checkIfEmpty(jqElement, obj) || someMissing;
-                            }
-                        }
-                    }
-
-                    // Validate that all required post fields have values
-                    someMissing =
-                        this._checkMandatoryFields(
-                            this.requiredPostFields,
-                            this.postTableFields,
-                            tblSeq,
-                            missingList
-                        ) || someMissing;
-                }
-            } catch (ex) {
-                this._handle_exception("ensureMandatoryValues", ex);
-            }
-
-            if (someMissing) {
-                alert(
-                    "Some data is either invalid or missing. Please correct the highlighted fields."
-                );
-                return false;
-            }
-
-            return true;
-        },
-
-        _checkMandatoryFields: function(requiredFields, fields, tblSeq, missingList) {
-            var someMissing = false;
-            for (i = 0; i < requiredFields.length; i++) {
-                fldIdx = requiredFields[i];
-                field = fields[fldIdx];
-
-                if (!this._useField(field, tblSeq)) {
-                    continue;
-                }
-                var fieldObj = this._getFieldObject(field, tblSeq);
-                if (fieldObj.disabled) {
-                    continue;
-                }
-                var prefix = "Table " + tblSeq;
-                var jqElement = this.getElementInTable(field.id + "." + tblSeq);
-                if (jqElement) {
-                    someMissing = this._checkIfEmpty(jqElement, fieldObj) || someMissing;
-                }
-            }
-            return someMissing;
-        },
-
-        _checkIfEmpty: function(jqElement, obj) {
-            var someMissing = false;
-            if (typeof obj.value == "string") {
-                if (obj && obj.value.trim() === "") {
-                    someMissing = true;
-                    this.markElementAsError(jqElement);
-                } else if (obj && obj.type == "number") {
-                    var nbr = parseFloat(obj.value);
-                    if (isNaN(obj.value) || nbr === 0) {
-                        someMissing = true;
-                        this.markElementAsError(jqElement);
-                    } else {
-                        this.markElementAsOK(jqElement);
-                    }
-                } else {
-                    this.markElementAsOK(jqElement);
-                }
-            }
-            return someMissing;
-        },
-
-        _setValue: function(field, tblSeq, rowNbr) {
-            if (!("value" in field)) {
-                return;
-            }
-            if (!("display" in field)) {
-                field.display = field.value;
-            }
-            var fieldID = field.id + "." + tblSeq;
-            if (rowNbr) {
-                fieldID += "." + rowNbr;
-            }
-            var fieldElement = this.getElementInTable(fieldID);
-
-            if (!fieldElement || fieldElement == undefined) {
-                return null;
-            }
-            if (field.relatedTable) {
-                fieldElement.attr("related_table", field.relatedTable);
-            }
-            if (field.type == "checkbox") {
-                fieldElement.prop("checked", field.value);
-            } else if (field.type == "reference" || field.type == "choice") {
-                if (!this.isDisabled) {
-                    fieldElement.select2("data", {
-                        id: field.value,
-                        text: field.display
-                    });
-                } else {
-                    fieldElement.val(field.display);
-                    fieldElement.prop("orig_value", field.value);
-                }
-            } else if (field.type == "date" || field.type == "datetime") {
-                fieldElement.val(field.value);
-            } else {
-                // Assume it's text
-                // Decode the value and display value in case they
-                // contain encoded values
-                field.value = decodeURI(field.value);
-                field.display = decodeURI(field.display);
-                fieldElement.val(field.value);
-            }
-            return fieldElement;
-        },
-
-        _setCurrentFieldValues: function(tableFields, savedFields) {
-            try {
-                for (var i = 0; i < savedFields.length; i++) {
-                    var savedField = savedFields[i];
-                    for (var j = 0; j < tableFields.length; j++) {
-                        var field = tableFields[j];
-                        var id;
-                        // This value was previously stored as 'field'
-                        // so we need to account for that possibility
-                        if ("id" in savedField) {
-                            id = savedField.id;
-                        } else {
-                            id = savedField.field;
-                        }
-                        if (field.id == id) {
-                            field.value = savedField.value;
-                            field.display = savedField.display;
-                            break;
-                        }
-                    }
-                }
-            } catch (ex) {
-                this._handle_exception("_setCurrentFieldValues", ex);
-            }
-        },
-
-        _setRowCurrentValues: function(cells) {
-            try {
-                for (var i = 0; i < cells.length; i++) {
-                    var cell = cells[i];
-                    var id;
-                    // This value was previously stored as 'field'
-                    // so we need to account for that possibility
-                    if ("id" in cell) {
-                        id = cell.id;
-                    } else {
-                        id = cell.field;
-                    }
-
-                    for (var j = 0; j < this.tableFields.length; j++) {
-                        if (this.tableFields[j].id == id) {
-                            this.tableFields[j].value = cell.value;
-                            this.tableFields[j].display = cell.display;
-                            break;
-                        }
-                    }
-                }
-            } catch (ex) {
-                this._handle_exception("_setRowCurrentValues", ex);
-            }
-        },
-
-        disableAfterOrdered: function() {
-            return this.disableAfterOrder;
-        },
-
-        connectElementToTable: function(el, table) {
-            el.attr("related_table", table.id);
-        },
-
-        toggleTableDisplay: function(tableID, onOff) {
-            var table = this.getTableElement(tableID);
-            if (table) {
-                var parentDiv = table.parentNode;
-                this.toggleDisplay(parentDiv, onOff);
-            }
-        },
-
-        toggleDisplay: function(ctl, onOff) {
-            var display = "none";
-            if (onOff) {
-                display = "block";
-            }
-            ctl.style.display = display;
-        },
-
-        _getRealFieldID: function(fieldName) {
-            var realName = fieldName;
-            var parts = realName.split(".");
-            if (parts.length > 1) {
-                realName = parts[1];
-            }
-            realName = realName.replace(/[._0-9]+$/, "");
-            return realName;
-        },
-
-        _editValue: function(ctl, fieldName, tblSeq, rowNbr) {
-            var fieldValue = this.getValue(fieldName, tblSeq, rowNbr);
-            // Only editing numbers right now
-            if (fieldValue.type == "number") {
-                if (isNaN(fieldValue.value)) {
-                    this.setValue(fieldName, "0", "0", tblSeq, rowNbr);
-                    alert("Invalid number. Please re-enter.");
-                    return false;
-                }
-            } else if (fieldValue.type == "date" || fieldValue.type == "datetime") {
-                var format =
-                    fieldValue.type == "datetime" ? this.userDateTimeFormat : this.userDateFormat;
-                if (fieldValue.value == null || fieldValue.value == "") {
-                    return true;
-                }
-
-                var d = dateTimeUtils.getDateFromFormat(fieldValue.value, format);
-                var formattedDateJQ = jq(ctl);
-                if (fieldValue.value !== "" && d == 0) {
-                    formattedDateJQ
-                        .parent()
-                        .closest("div")
-                        .addClass("has-error");
-                } else {
-                    formattedDateJQ
-                        .parent()
-                        .closest("div")
-                        .removeClass("has-error");
-                    formattedDateJQ
-                        .parent()
-                        .closest("div")
-                        .find(".input-group-btn")
-                        .data("DateTimePicker")
-                        .setValue(new Date(d));
-                }
-            }
-            return true;
-        },
-
-        _checkIfElementHasValue: function(fieldName, tblSeq, rowNbr) {
-            var element = null;
-            /*
-                     * Get the label element
-                     */
-            var label = this.getTableElement("label." + fieldName + "." + tblSeq);
-            if (label) {
-                var parent = label.parent();
-                if (parent.prop("tagName").toLowerCase() == "th") {
-                    element = parent;
-                } else {
-                    element = parent.parent();
-                }
-            }
-
-            var isFilled = false;
-            if (rowNbr) {
-                isFilled = this.columnIsFilled(fieldName, tblSeq, rowNbr);
-            } else {
-                var fieldValue = this.getValue(fieldName, tblSeq);
-                if (fieldValue.value && fieldValue.value != "") {
-                    isFilled = true;
-                }
-            }
-
-            if (element) {
-                if (!isFilled) {
-                    element.addClass("is-required");
-                    element.removeClass("is-filled");
-                } else {
-                    element.removeClass("is-required");
-                    element.addClass("is-filled");
-                }
-            }
-            /*
-                     * Get the status span element
-                     */
-            var span = this.getTableElement("status." + fieldName + "." + tblSeq);
-            if (span) {
-                if (!isFilled) {
-                    span.removeClass("mandatory-filled");
-                } else {
-                    span.addClass("mandatory-filled");
-                }
-            }
-        },
-
-        columnIsFilled: function(fieldName, tblSeq, rowSeq) {
-            var tableElement = this.getElementByID(fieldName + "." + tblSeq + "." + rowSeq);
-
-            var columnIsFilled = true;
-            var currentRow = this._getElementUp(tableElement, "tr");
-            var table = this._getElementUp(currentRow, "table");
-            var rows = this._getTableRows(table);
-            for (var i = 0; i < rows.length; i++) {
-                var row = rows[i];
-                var rowSeq = row.attr("row_seq");
-                var fieldValue = this.getValue(fieldName, tblSeq, rowSeq);
-                if (fieldValue.value == null || fieldValue.value == "") {
-                    columnIsFilled = false;
-                    break;
-                }
-            }
-            return columnIsFilled;
-        },
-
-        multiLineTextKeyDown: function(ctl) {
-            if (ctl instanceof jQuery) {
-                ctl = ctl.get(0);
-            }
-            multiKeyDown(ctl);
-        },
-
-        multiLineTextIsFocused: function(ctl, isFocused) {
-            if (ctl instanceof jQuery) {
-                ctl = ctl.get(0);
-            }
-            ctl.isFocused = isFocused;
-        },
-
-        handleEvent: function(control, eventName, fieldName) {
-            switch (eventName) {
-                case "change":
-                    this.cellChanged(control, fieldName);
-                    break;
-                case "click":
-                    this.cellClicked(control, fieldName);
-                    break;
-                case "add_row":
-                    this.addRowClicked(control);
-                    break;
-                case "delete_row":
-                    this.deleteRowClicked(control);
-                    break;
-                case "add_table":
-                    this.addTableClicked(control);
-                    break;
-                case "delete_table":
-                    this.deleteTableClicked(control);
-                    break;
-                default:
-                    alert("Unknown event " + eventName);
-                    return;
-            }
-        },
-
-        cellChanged: function(ctl, fieldName) {
-            if (ctl instanceof jQuery) {
-                ctl = ctl.get(0);
-            }
-
-            if (ctl.tagName.toLowerCase() == "textarea") {
-                ctl.isFocused = false;
-                // multiModified(ctl);
-            }
-
-            // Do the built in edits first
-            var elementParts = this.getTableAndRowFromElement(ctl);
-            var rc = this._editValue(
-                ctl,
-                elementParts.fieldName,
-                elementParts.tblSeq,
-                elementParts.rowNumber
-            );
-            if (!rc) {
-                ctl.focus();
-                return;
-            }
-
-            this._checkIfElementHasValue(
-                elementParts.fieldName,
-                elementParts.tblSeq,
-                elementParts.rowNumber
-            );
-            this.markElementAsOK(jq(ctl));
-
-            // User defined script
-            var funcName = fieldName + "_onchange";
-            if (this[funcName] && typeof this[funcName] == "function") {
-                this[funcName](ctl, this);
-            }
-        },
-
-        cellClicked: function(ctl, fieldName) {
-            var funcName = fieldName + "_onclick";
-            if (this[funcName] && typeof this[funcName] == "function") {
-                this[funcName](ctl, this);
-            }
-        },
-
-        addRowClicked: function(ctl) {
-            var table = this._getElementUp(ctl, "table");
-            this.setRowFocus = true;
-            this.addRow(table);
-            this.setRowFocus = false;
-        },
-
-        deleteRowClicked: function(ctl) {
-            try {
-                var row = this._getElementUp(ctl, "tr");
-                var table = this._getElementUp(row, "table");
-                var tblSeq = table.attr("table_seq");
-
-                row.remove();
-
-                var rowSeq = "-1";
-                var rows = this._getTableRows(table);
-                if (rows.length > 0) {
-                    row = rows[0];
-                    rowSeq = row.attr("row_seq");
-                }
-
-                if (this.onRowDelete && typeof this.onRowDelete == "function") {
-                    this.onRowDelete(tblSeq, this);
-                }
-
-                // Check all columns to see if they are filled
-                for (var i = 0; i < this.tableFields.length; i++) {
-                    var field = this.tableFields[i];
-                    if (field.id == "remove" || !this._useField(field, tblSeq)) {
-                        continue;
-                    }
-
-                    // Set the required field marker for the column
-                    if (rowSeq != "-1") {
-                        this._checkIfElementHasValue(field.id, tblSeq, rowSeq);
-                    }
-                }
-
-                if (rows.length == 0) {
-                    this.addRow(table);
-                }
-            } catch (ex) {
-                this._handle_exception("deleteRowClicked", ex);
-            }
-        },
-
-        addTableClicked: function(ctl) {
-            var table = this.createTableSection();
-            this.isOnLoad = true;
-            this.addRow(table);
-            this.isOnLoad = false;
-            return table;
-        },
-
-        deleteTableClicked: function(ctl) {
-            var tableID = ctl.id.substr(13);
-            this.deleteTable(tableID);
-        },
-
-        fieldChanged: function(element, eventName) {
-            var fieldName = this._getRealFieldID(ctl.id);
-            var elementParts = this.getTableAndRowFromElement(element);
-            if (!elementParts.tblSeq) {
-                // No number found
-                this._handle_exception(
-                    "fieldChanged",
-                    "ERROR Table seq not found on control " + ctl.id
-                );
-                return;
-            }
-
-            var mandatory = false;
-            var fieldValue = this.getValue(fieldName, elementParts.tblSeq, elementParts.rowNumber);
-            var nValue = fieldValue.value;
-            var fType = ctl.className;
-
-            var original = this.getElementInTable("sys_original." + ctl.id);
-            var oValue = "unknown";
-            if (original && original != undefined) oValue = original.value;
-
-            var newClass = "changed";
-            var oldClass = "";
-            var sl = this._getStatusElement(fieldName, elementParts.tblSeq, elementParts.rowNumber);
-            if (!sl) {
-                return;
-            }
-
-            if (
-                sl.className == "mandatory" ||
-                sl.attr("oclass") == "mandatory" ||
-                sl.className == "mandatory_populatedÂ¬Â¥" ||
-                sl.attr("oclass") == "mandatory_populated"
-            ) {
-                mandatory = true;
-            }
-
-            oldClass = sl.className;
-
-            if (mandatory && nValue === "") {
-                newClass = "mandatory";
-            } else if (mandatory && fType == "cat_item_option" && nValue == "false") {
-                newClass = "mandatory";
-            } else if (oValue == nValue) {
-                newClass = sl.attr("oclass");
-            }
-
-            sl.className = newClass;
-
-            if (oldClass != newClass) {
-                sl.attr("oclass", oldClass);
-            }
-
-            if (
-                this.events[eventName] &&
-                typeof this.events[eventName] == "function" &&
-                !this.isDisabled
-            ) {
-                this.events[eventName](ctl);
-            }
-        },
-
-        resizeTextArea: function(ctl) {
-            if (ctl instanceof jQuery) {
-                ctl = ctl.get(0);
-            }
-
-            if (ctl.clientHeight == ctl.scrollHeight) {
-                ctl.style.height = "30px";
-            }
-            var maxHeight = 300;
-            var adjustedHeight = ctl.clientHeight;
-            if (!maxHeight || maxHeight > adjustedHeight) {
-                adjustedHeight = Math.max(ctl.scrollHeight, adjustedHeight);
-                if (maxHeight) {
-                    adjustedHeight = Math.min(maxHeight, adjustedHeight);
-                }
-                if (adjustedHeight > ctl.clientHeight) {
-                    ctl.style.height = adjustedHeight + "px";
-                }
-            }
-        },
-
-        _getStatusElement: function(fieldName, table, row) {
-            var id = fieldName + "." + table;
-            if (row) {
-                id += "." + row;
-            }
-            var el = this.getElementInTable("status." + id);
-            return el;
-        },
-
-        getElements: function(selector, parentElement) {
-            var elements = null;
-            if (parentElement) {
-                var jqObj;
-                if (parentElement instanceof jQuery) {
-                    jqObj = parentElement;
-                } else {
-                    jqObj = jq(parentElement);
-                }
-                elements = jqObj.find(selector);
-            } else {
-                elements = jq(selector);
-            }
-            if (elements.length == 0) {
-                return null;
-            }
-            return elements;
-        },
-
-        getElementInTable: function(elementID) {
-            var tblSection = this.getTableMarker();
-            return this.getElementByID(elementID, tblSection);
-        },
-
-        _getElementDown: function(element, tagName) {
-            if (!(element instanceof jQuery)) {
-                element = jq(element);
-            }
-            var children = element.children(tagName);
-            if (children.length == 0) {
-                return null;
-            }
-            return children;
-        },
-
-        _getElementUp: function(element, tagName) {
-            if (!(element instanceof jQuery)) {
-                element = jq(element);
-            }
-            var parents = element.parent().closest(tagName);
-            if (parents.length == 0) {
-                return null;
-            }
-            return parents;
-        },
-
-        _getElementPrevious: function(element, tagName) {
-            if (!(element instanceof jQuery)) {
-                element = jq(element);
-            }
-            var sibs = element.prevAll(tagName);
-            if (sibs.length == 0) {
-                return null;
-            }
-            return sibs;
-        },
-
-        _formatJQID: function(id) {
-            return "#" + id.replace(/(:|\.|\[|\]|,|=)/g, "\\$1");
-        },
-
-        _setReferenceSelect2: function(element, fieldProps) {
-            element.select2({
-                placeholder: "Search...",
-                containerCssClass: "wrap",
-                query: function(options) {
-                    var ga = new GlideAjax("x_58056_cat_tbl_var.CatTblVarAjax");
-                    ga.addParam("sysparm_name", "getTableReferenceData");
-
-                    var parameters = {
-                        sysparm_page: options.page,
-                        sysparm_page_size: 30,
-                        sysparm_term: options.term,
-                        sysparm_table: fieldProps.reference,
-                        sysparm_ref_qual: fieldProps.refQual,
-                        sysparm_ac_columns: fieldProps.acColumns,
-                        sysparm_ac_startswith: fieldProps.acStartswith ? "true" : "false"
-                    };
-
-                    ga.addParam("sysparm_parameters", JSON.stringify(parameters));
-                    ga.getXMLAnswer(function(answer) {
-                        var data = JSON.parse(answer);
-                        var more = options.page * 30 < data.total_count;
-                        options.callback({
-                            results: data.items,
-                            more: more
-                        });
-                    });
-                },
-                dropdownCssClass: "bigdrop", // apply css that makes the dropdown taller
-                escapeMarkup: function(markup) {
-                    return markup; // let our custom formatter work
-                },
-                minimumInputLength: 0,
-                formatResult: function(result) {
-                    var descr = '<div style="margin: 2px">';
-                    descr += '<span style="margin-right: 10px">' + result.text + "</span>";
-                    for (var i = 0; i < result.additionalValues.length; i++) {
-                        descr +=
-                            '<span style="margin-right: 5px">' +
-                            result.additionalValues[i] +
-                            "</span>";
-                    }
-                    descr += "</div>";
-                    return descr;
-                },
-                formatSelection: function(result) {
-                    return result.text;
-                },
-                formatAjaxError: function(jqXHR, textStatus, errorThrown) {
-                    alert("ERROR status=" + textStatus + " jqXHR=" + jqXHR);
-                    return "No data found";
-                }
-            });
-            return element;
-        },
-
-        _setChoiceSelect2: function(element, fieldProps) {
-            element.select2({
-                placeholder: "",
-                data: fieldProps.select2Options,
-                escapeMarkup: function(markup) {
-                    return markup; // let our custom formatter work
-                },
-                minimumInputLength: 0,
-                formatResult: function(item) {
-                    return item.text;
-                },
-                formatSelection: function(item) {
-                    return item.text;
-                }
-            });
-            return element;
-        },
-
-        _addStyles: function() {
-            this._injectStyles(".bigdrop", "min-width: 120px !important;");
-        },
-
-        _injectStyles: function(selector, rules) {
-            // Create the <style> tag
-            var style = document.createElement("style");
-            // WebKit hack :(
-            style.appendChild(document.createTextNode(""));
-
-            // Add the <style> element to the page
-            document.head.appendChild(style);
-
-            var sheet = style.sheet;
-
-            if ("insertRule" in sheet) {
-                sheet.insertRule(selector + "{" + rules + "}", sheet.cssRules.length);
-            } else if ("addRule" in sheet) {
-                sheet.addRule(selector, rules);
-            }
-        },
-
-        _handle_exception: function(func, ex) {
-            if (this._debug) {
-                if (ex instanceof Error) {
-                    alert(
-                        "Exception caught in function " +
-                            func +
-                            ":\nName:" +
-                            ex.name +
-                            "\nMessage:" +
-                            ex.message
-                    );
-                } else {
-                    alert("Exception caught in function " + func + ":\n" + ex);
-                }
-            }
+         * Get the status span element
+         */
+        var span = this.getTableElement("status." + field.id + "." + tblSeq);
+        if (!span) {
+          continue;
         }
-    };
 
-    return new CatTblVarBuilder();
+        // Add the appropriate classes and attributes
+        if (mandatory) {
+          span.addClass("fa fa-asterisk mandatory required-marker");
+          span.attr("title", "Mandatory - must be populated before Submit");
+          span.attr("oclass", "mandatory");
+          span.attr("mandatory", "true");
+        } else {
+          span.removeClass("fa fa-asterisk mandatory required-marker");
+          span.attr("title", "");
+          span.attr("oclass", "");
+          span.attr("mandatory", "");
+        }
+
+        // Set the status filled or not filled color
+        this._checkIfElementHasValue(field.id, tblSeq, 1);
+      }
+    },
+
+    markElementAsError: function (element) {
+      if (element.data("select2")) {
+        element = element.prev("div").children("a");
+      }
+
+      element.css({
+        "background-color": this.tableData.invalid_background_color,
+        color: this.tableData.invalid_text_color,
+      });
+    },
+
+    markElementAsOK: function (element) {
+      if (element.data("select2")) {
+        element = element.prev("div").children("a");
+      }
+      element.css({
+        "background-color": "",
+        color: "",
+      });
+    },
+
+    _createTableElement: function (row, tblSeq, rowSeq, field) {
+      var fieldHTML = field.renderHTML.replace(new RegExp(this.TABLE_SEQ_PLACE_HOLDER, "gi"), tblSeq);
+      fieldHTML = fieldHTML.replace(new RegExp(this.ROW_SEQ_PLACE_HOLDER, "gi"), rowSeq);
+      row.append(fieldHTML);
+      if (!this.isDisabled) {
+        this._updateElement(field, tblSeq + "." + rowSeq, row);
+      }
+    },
+
+    _createFieldElement: function (field, tblSeq, parentElement) {
+      var fieldHTML = field.renderHTML.replace(new RegExp(this.TABLE_SEQ_PLACE_HOLDER, "gi"), tblSeq);
+      parentElement.append(fieldHTML);
+      if (!this.isDisabled) {
+        this._updateElement(field, tblSeq, parentElement);
+      }
+    },
+
+    _updateElement: function (field, fieldSuffix, parentElement) {
+      var element = this.getElementByID(field.id + "." + fieldSuffix, parentElement);
+
+      switch (field.type) {
+        case "reference":
+          this._setReferenceSelect2(element, field);
+          break;
+        case "choice":
+          this._setChoiceSelect2(element, field);
+          if (field.select2InitOption && field.select2InitOption.length > 0) {
+            element.select2("data", field.select2InitOption);
+            element.change();
+          }
+          break;
+        case "datetime":
+        case "date":
+          if (this.isSP) {
+            this._setDateTimeElement(element, field, fieldSuffix);
+          }
+          break;
+        case "button":
+        case "checkbox":
+        case "multiline_text":
+          element.blur(this.multiLineTextIsFocused.bind(this, element));
+          element.focus(this.multiLineTextIsFocused.bind(this, element));
+          element.keyup(this.resizeTextArea.bind(this, element));
+          element.keydown(this.multiLineTextKeyDown.bind(this, element));
+          break;
+        default:
+      }
+    },
+
+    _setDateTimeElement: function (element, field, fieldSuffix) {
+      var format = field.type == "datetime" ? this.userDateTimeFormat : this.userDateFormat;
+
+      var dpSelector =
+        field.type == "datetime" ? field.id + "." + fieldSuffix + "_datetimepicker" : field.id + "." + fieldSuffix + "_datepicker";
+      dpSelector = this._formatJQID(dpSelector);
+
+      var dp = jq(dpSelector);
+      dp.datetimepicker({
+        keepInvalid: true,
+        pickTime: (field.type == "datetime") === true,
+        useCurrent: false,
+        format: "X",
+      });
+      dp.on("dp.change", function (e) {
+        var value = new Date(e.date._d);
+        var formattedDate = dateTimeUtils.formatDate(value, format);
+        if (formattedDate == null || formattedDate == "") {
+          element.val(new Date());
+          dp.data("DateTimePicker").setValue(new Date(d));
+          return "";
+        }
+
+        var d = dateTimeUtils.getDateFromFormat(formattedDate, format);
+        if (formattedDate === "" || d != 0) {
+          element.val(formattedDate);
+          dp.data("DateTimePicker").setValue(new Date(d));
+          if (element.attr("value-state") == "initial") {
+            element.attr("value-state", "");
+          } else {
+            element.change();
+          }
+        }
+        return formattedDate;
+      });
+    },
+
+    _createDocumentElement: function (tagName, props, parentElement) {
+      var element;
+      if (props) {
+        element = jq("<" + tagName + " />", props);
+      } else {
+        element = jq("<" + tagName + " />");
+      }
+
+      if (parentElement) {
+        parentElement.append(element);
+      }
+      return element;
+    },
+
+    disableFields: function (fields, tblSeq) {
+      // Disable all fields
+      for (i = 0; i < fields.length; i++) {
+        var field = fields[i];
+        if (!this._useField(field, tblSeq)) {
+          return;
+        }
+        this.disableElement(field.id + "." + tblSeq, field.type, true);
+      }
+    },
+
+    disableElement: function (fldID, type, disable) {
+      var elementID = fldID;
+
+      var disableElement = this.getElementInTable(elementID);
+      if (disableElement) {
+        if (type == "reference" || type == "choice") {
+          if (disable) {
+            disableElement.select2("disable");
+          } else {
+            disableElement.select2("enable");
+          }
+        } else if (disableElement.prop("tagName").toLowerCase() == "span") {
+          if (disable) {
+            disableElement.css("pointer-events", "none");
+          } else {
+            disableElement.css("pointer-events", "auto");
+          }
+        } else {
+          disableElement.prop("disabled", disable);
+          if (disable) {
+            disableElement.parent().css("pointer-events", "none");
+          } else {
+            disableElement.parent().css("pointer-events", "auto");
+          }
+        }
+      }
+    },
+
+    _getTables: function () {
+      var tables = [];
+      var tblSection = this.getTableMarker();
+      tblSection.find("table").each(function () {
+        tables.push(jq(this));
+      });
+      return tables;
+    },
+
+    _getTableRows: function (tableJQ) {
+      var rows = [];
+      tableJQ.find("tbody > tr").each(function () {
+        rows.push(jq(this));
+      });
+      return rows;
+    },
+
+    getTableValues: function () {
+      var tableArray = [];
+
+      try {
+        var tables = this._getTables();
+        for (var i = 0; i < tables.length; i++) {
+          var table = tables[i];
+          var seq = table.attr("table_seq");
+          if (!seq) {
+            return true;
+          }
+
+          // If the table is hidden forget it.
+          if (!this._isVisible(table)) {
+            return true;
+          }
+
+          tableObj = {};
+          // Get pre field values
+          tableObj.preFields = this.getFieldResults(this.preTableFields, seq);
+          // Get post field values
+          tableObj.postFields = this.getFieldResults(this.postTableFields, seq);
+          // Get table row values
+          tableObj.rows = this.getTableFieldResults(table, seq);
+
+          tableArray.push(tableObj);
+        }
+      } catch (ex) {
+        this._handle_exception("getTableValues", ex);
+      }
+      return tableArray;
+    },
+
+    getTableFieldResults: function (tableJQ, tblSeq) {
+      var rowArray = [];
+      var rows = this._getTableRows(tableJQ);
+      for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        var rowSeq = row.attr("row_seq");
+        var cellArray = [];
+        for (var fIdx = 0; fIdx < this.tableFields.length; fIdx++) {
+          var field = this.tableFields[fIdx];
+          var obj = this._getCellObject(rowSeq, fIdx, field, this._useField(field, tblSeq), tblSeq);
+          cellArray.push({
+            id: obj.field,
+            value: obj.value,
+            display: obj.display,
+          });
+        }
+        rowArray.push(cellArray);
+      }
+      return rowArray;
+    },
+
+    getFieldResults: function (fields, tblSeq) {
+      var fieldArray = [];
+
+      for (i = 0; i < fields.length; i++) {
+        var field = fields[i];
+
+        if (!this._useField(field, tblSeq)) {
+          return;
+        }
+        var obj = this._getFieldObject(field, tblSeq);
+        fieldArray.push({
+          id: obj.field,
+          value: obj.value,
+          display: obj.display,
+        });
+      }
+      return fieldArray;
+    },
+
+    _isVisible: function (element) {
+      if (!(element instanceof jQuery)) {
+        element = jq(element);
+      }
+      var isVisible = true;
+      try {
+        isVisible = element.is(":visible");
+      } catch (e) {}
+      return isVisible;
+    },
+
+    _getCellObject: function (ri, ci, field, useField, tblSeq) {
+      var fldID = field.id + "." + tblSeq + "." + ri;
+      return this._setFieldProperties(fldID, field, tblSeq);
+    },
+
+    _setFieldProperties: function (fieldID, fieldProps, tblSeq) {
+      var obj = {};
+      obj.field = fieldProps.id;
+      obj.label = fieldProps.label;
+      obj.mandatory = fieldProps.mandatory;
+      obj.type = fieldProps.type;
+      obj.giveFocus = fieldProps.giveFocus;
+      obj.reference = fieldProps.reference;
+      obj.choiceOptions = fieldProps.choiceOptions;
+      obj.refQual = fieldProps.refQual;
+      obj.acColumns = fieldProps.acColumns;
+      obj.acStartswith = fieldProps.acStartswith;
+      obj.cellCSS = fieldProps.cellCSS;
+      obj.labelCSS = fieldProps.labelCSS;
+      obj.show = fieldProps.show;
+      obj.imageSrc = fieldProps.imageSrc;
+      obj.value = "";
+      obj.display = "";
+      obj.relatedTable = "";
+      obj.disabled = false;
+
+      var type = fieldProps.type;
+
+      // If this field is not shown on this table then return empty object
+      var useField = this._useField(fieldProps, tblSeq);
+      if (!useField) {
+        return obj;
+      }
+
+      var relatedTable = "";
+      var element = this.getElementInTable(fieldID);
+      if (element) {
+        relatedTable = element.attr("related_table");
+        obj.disabled = element.is(":disabled");
+      }
+
+      var fieldValues = this._getFieldValues(type, element);
+      obj.value = fieldValues.value;
+      obj.display = fieldValues.display;
+
+      if (relatedTable && relatedTable != undefined) {
+        var table = this.getTableElement(relatedTable);
+        if (table && this._isVisible(table)) {
+          obj.relatedTable = relatedTable;
+        }
+      }
+      return obj;
+    },
+
+    _getFieldObject: function (preField, seq) {
+      var fldID = preField.id + "." + seq + "";
+      return this._setFieldProperties(fldID, preField, seq);
+    },
+
+    getValue: function (fieldName, tblSeq, rowNbr) {
+      var field = null;
+      var id = fieldName + "." + tblSeq;
+      if (rowNbr) {
+        id = id + "." + rowNbr;
+        field = this._getFieldDefinition(this.tableFields, fieldName);
+      } else {
+        field = this._getFieldDefinition(this.preTableFields, fieldName);
+        if (!field) {
+          field = this._getFieldDefinition(this.postTableFields, fieldName);
+        }
+      }
+      if (!field) {
+        return fieldValue;
+      }
+
+      var valueEl = this.getElementInTable(id);
+
+      if (!valueEl) {
+        return fieldValue;
+      }
+
+      var type = field.type;
+      var fieldValue = this._getFieldValues(type, valueEl);
+      fieldValue.type = type;
+      return fieldValue;
+    },
+
+    _getFieldValues: function (fieldType, fieldJQ) {
+      var fieldValues = {
+        value: "",
+        display: "",
+      };
+      if (!fieldJQ) {
+        return fieldValues;
+      }
+
+      fieldValues.value = fieldJQ.val();
+
+      if (fieldType == "checkbox") {
+        fieldValues.value = fieldJQ.is(":checked");
+        fieldValues.display = fieldJQ.is(":checked") ? "Yes" : "No";
+      } else if (fieldType == "reference" || fieldType == "choice") {
+        if (!this.isDisabled) {
+          var data = fieldJQ.select2("data");
+          if (data && "id" in data) {
+            fieldValues.value = data.id;
+            fieldValues.display = data.text;
+          }
+        } else {
+          fieldValues.display = fieldValues.value;
+          fieldValues.value = fieldJQ.prop("orig_value");
+        }
+      } else if (fieldType == "multiline_text" || fieldType == "text") {
+        fieldValues.value = encodeURI(fieldValues.value.trim());
+      } else {
+        fieldValues.value = fieldValues.value.trim();
+      }
+
+      if (fieldValues.display.trim() === "") {
+        fieldValues.display = fieldValues.value;
+      }
+
+      return fieldValues;
+    },
+
+    _getFieldDefinition: function (fields, fieldName) {
+      for (var i = 0; i < fields.length; i++) {
+        var field = fields[i];
+        if (field.id == fieldName) {
+          return field;
+        }
+      }
+      return null;
+    },
+
+    ensureMandatoryValues: function () {
+      var nbr, i, fldIdx, preField, postField, reqList, field, cellIdx;
+
+      if (!this.doCheckMandatory) {
+        return true;
+      }
+
+      var someMissing = false;
+
+      var missingList = [];
+      var prefix = "";
+
+      // Check table mandatory fields
+      try {
+        var tables = this._getTables();
+        for (var tIdx = 0; tIdx < tables.length; tIdx++) {
+          var table = tables[tIdx];
+
+          // We only want tables with our table seq specified
+          // Any pre table fields might also be in a table
+          var tblSeq = table.attr("table_seq");
+          if (!tblSeq) {
+            continue;
+          }
+
+          // If the table is hidden forget it.
+          if (!this._isVisible(table)) {
+            continue;
+          }
+
+          // Validate that all required pre fields have values
+          someMissing = this._checkMandatoryFields(this.requiredPreFields, this.preTableFields, tblSeq, missingList) || someMissing;
+
+          // Validate that all required fields are filled in (except header row)
+          var rows = this._getTableRows(table);
+          for (var rIdx = 0; rIdx < rows.length; rIdx++) {
+            var row = rows[rIdx];
+            var rowSeq = row.attr("row_seq");
+
+            for (i = 0; i < this.requiredTableFields.length; i++) {
+              cellIdx = this.requiredTableFields[i];
+              field = this.tableFields[cellIdx];
+
+              if (!this._useField(field, tblSeq)) {
+                continue;
+              }
+
+              var obj = this._getCellObject(rowSeq, cellIdx, field, true, tblSeq);
+              if (obj.disabled) {
+                continue;
+              }
+              prefix = "Table " + tblSeq + " - Row " + rowSeq;
+              var jqElement = this.getElementInTable(field.id + "." + tblSeq + "." + rowSeq);
+              if (jqElement) {
+                someMissing = this._checkIfEmpty(jqElement, obj) || someMissing;
+              }
+            }
+          }
+
+          // Validate that all required post fields have values
+          someMissing = this._checkMandatoryFields(this.requiredPostFields, this.postTableFields, tblSeq, missingList) || someMissing;
+        }
+      } catch (ex) {
+        this._handle_exception("ensureMandatoryValues", ex);
+      }
+
+      if (someMissing) {
+        alert("Some data is either invalid or missing. Please correct the highlighted fields.");
+        return false;
+      }
+
+      return true;
+    },
+
+    _checkMandatoryFields: function (requiredFields, fields, tblSeq, missingList) {
+      var someMissing = false;
+      for (i = 0; i < requiredFields.length; i++) {
+        fldIdx = requiredFields[i];
+        field = fields[fldIdx];
+
+        if (!this._useField(field, tblSeq)) {
+          continue;
+        }
+        var fieldObj = this._getFieldObject(field, tblSeq);
+        if (fieldObj.disabled) {
+          continue;
+        }
+        var prefix = "Table " + tblSeq;
+        var jqElement = this.getElementInTable(field.id + "." + tblSeq);
+        if (jqElement) {
+          someMissing = this._checkIfEmpty(jqElement, fieldObj) || someMissing;
+        }
+      }
+      return someMissing;
+    },
+
+    _checkIfEmpty: function (jqElement, obj) {
+      var someMissing = false;
+      if (typeof obj.value == "string") {
+        if (obj && obj.value.trim() === "") {
+          someMissing = true;
+          this.markElementAsError(jqElement);
+        } else if (obj && obj.type == "number") {
+          var nbr = parseFloat(obj.value);
+          if (isNaN(obj.value) || nbr === 0) {
+            someMissing = true;
+            this.markElementAsError(jqElement);
+          } else {
+            this.markElementAsOK(jqElement);
+          }
+        } else {
+          this.markElementAsOK(jqElement);
+        }
+      }
+      return someMissing;
+    },
+
+    _setValue: function (field, tblSeq, rowNbr) {
+      if (!("value" in field)) {
+        return;
+      }
+      if (!("display" in field)) {
+        field.display = field.value;
+      }
+      var fieldID = field.id + "." + tblSeq;
+      if (rowNbr) {
+        fieldID += "." + rowNbr;
+      }
+      var fieldElement = this.getElementInTable(fieldID);
+
+      if (!fieldElement || fieldElement == undefined) {
+        return null;
+      }
+      if (field.relatedTable) {
+        fieldElement.attr("related_table", field.relatedTable);
+      }
+      if (field.type == "checkbox") {
+        fieldElement.prop("checked", field.value);
+      } else if (field.type == "reference" || field.type == "choice") {
+        if (!this.isDisabled) {
+          fieldElement.select2("data", {
+            id: field.value,
+            text: field.display,
+          });
+        } else {
+          fieldElement.val(field.display);
+          fieldElement.prop("orig_value", field.value);
+        }
+      } else if (field.type == "date" || field.type == "datetime") {
+        fieldElement.val(field.value);
+      } else {
+        // Assume it's text
+        // Decode the value and display value in case they
+        // contain encoded values
+        field.value = decodeURI(field.value);
+        field.display = decodeURI(field.display);
+        fieldElement.val(field.value);
+      }
+      return fieldElement;
+    },
+
+    _setCurrentFieldValues: function (tableFields, savedFields) {
+      try {
+        for (var i = 0; i < savedFields.length; i++) {
+          var savedField = savedFields[i];
+          for (var j = 0; j < tableFields.length; j++) {
+            var field = tableFields[j];
+            var id;
+            // This value was previously stored as 'field'
+            // so we need to account for that possibility
+            if ("id" in savedField) {
+              id = savedField.id;
+            } else {
+              id = savedField.field;
+            }
+            if (field.id == id) {
+              field.value = savedField.value;
+              field.display = savedField.display;
+              break;
+            }
+          }
+        }
+      } catch (ex) {
+        this._handle_exception("_setCurrentFieldValues", ex);
+      }
+    },
+
+    _setRowCurrentValues: function (cells) {
+      try {
+        for (var i = 0; i < cells.length; i++) {
+          var cell = cells[i];
+          var id;
+          // This value was previously stored as 'field'
+          // so we need to account for that possibility
+          if ("id" in cell) {
+            id = cell.id;
+          } else {
+            id = cell.field;
+          }
+
+          for (var j = 0; j < this.tableFields.length; j++) {
+            if (this.tableFields[j].id == id) {
+              this.tableFields[j].value = cell.value;
+              this.tableFields[j].display = cell.display;
+              break;
+            }
+          }
+        }
+      } catch (ex) {
+        this._handle_exception("_setRowCurrentValues", ex);
+      }
+    },
+
+    disableAfterOrdered: function () {
+      return this.disableAfterOrder;
+    },
+
+    connectElementToTable: function (el, table) {
+      el.attr("related_table", table.id);
+    },
+
+    toggleTableDisplay: function (tableID, onOff) {
+      var table = this.getTableElement(tableID);
+      if (table) {
+        var parentDiv = table.parentNode;
+        this.toggleDisplay(parentDiv, onOff);
+      }
+    },
+
+    toggleDisplay: function (ctl, onOff) {
+      var display = "none";
+      if (onOff) {
+        display = "block";
+      }
+      ctl.style.display = display;
+    },
+
+    _getRealFieldID: function (fieldName) {
+      var realName = fieldName;
+      var parts = realName.split(".");
+      if (parts.length > 1) {
+        realName = parts[1];
+      }
+      realName = realName.replace(/[._0-9]+$/, "");
+      return realName;
+    },
+
+    _editValue: function (ctl, fieldName, tblSeq, rowNbr) {
+      var fieldValue = this.getValue(fieldName, tblSeq, rowNbr);
+      // Only editing numbers right now
+      if (fieldValue.type == "number") {
+        if (isNaN(fieldValue.value)) {
+          this.setValue(fieldName, "0", "0", tblSeq, rowNbr);
+          alert("Invalid number. Please re-enter.");
+          return false;
+        }
+      } else if (fieldValue.type == "date" || fieldValue.type == "datetime") {
+        var format = fieldValue.type == "datetime" ? this.userDateTimeFormat : this.userDateFormat;
+        if (fieldValue.value == null || fieldValue.value == "") {
+          return true;
+        }
+
+        var d = dateTimeUtils.getDateFromFormat(fieldValue.value, format);
+        var formattedDateJQ = jq(ctl);
+        if (fieldValue.value !== "" && d == 0) {
+          formattedDateJQ.parent().closest("div").addClass("has-error");
+        } else {
+          formattedDateJQ.parent().closest("div").removeClass("has-error");
+          formattedDateJQ.parent().closest("div").find(".input-group-btn").data("DateTimePicker").setValue(new Date(d));
+        }
+      }
+      return true;
+    },
+
+    _checkIfElementHasValue: function (fieldName, tblSeq, rowNbr) {
+      var element = null;
+      /*
+       * Get the label element
+       */
+      var label = this.getTableElement("label." + fieldName + "." + tblSeq);
+      if (label) {
+        var parent = label.parent();
+        if (parent.prop("tagName").toLowerCase() == "th") {
+          element = parent;
+        } else {
+          element = parent.parent();
+        }
+      }
+
+      var isFilled = false;
+      if (rowNbr) {
+        isFilled = this.columnIsFilled(fieldName, tblSeq, rowNbr);
+      } else {
+        var fieldValue = this.getValue(fieldName, tblSeq);
+        if (fieldValue.value && fieldValue.value != "") {
+          isFilled = true;
+        }
+      }
+
+      if (element) {
+        if (!isFilled) {
+          element.addClass("is-required");
+          element.removeClass("is-filled");
+        } else {
+          element.removeClass("is-required");
+          element.addClass("is-filled");
+        }
+      }
+      /*
+       * Get the status span element
+       */
+      var span = this.getTableElement("status." + fieldName + "." + tblSeq);
+      if (span) {
+        if (!isFilled) {
+          span.removeClass("mandatory-filled");
+        } else {
+          span.addClass("mandatory-filled");
+        }
+      }
+    },
+
+    columnIsFilled: function (fieldName, tblSeq, rowSeq) {
+      var tableElement = this.getElementByID(fieldName + "." + tblSeq + "." + rowSeq);
+
+      var columnIsFilled = true;
+      var currentRow = this._getElementUp(tableElement, "tr");
+      var table = this._getElementUp(currentRow, "table");
+      var rows = this._getTableRows(table);
+      for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        var rowSeq = row.attr("row_seq");
+        var fieldValue = this.getValue(fieldName, tblSeq, rowSeq);
+        if (fieldValue.value == null || fieldValue.value == "") {
+          columnIsFilled = false;
+          break;
+        }
+      }
+      return columnIsFilled;
+    },
+
+    multiLineTextKeyDown: function (ctl) {
+      if (ctl instanceof jQuery) {
+        ctl = ctl.get(0);
+      }
+      multiKeyDown(ctl);
+    },
+
+    multiLineTextIsFocused: function (ctl, isFocused) {
+      if (ctl instanceof jQuery) {
+        ctl = ctl.get(0);
+      }
+      ctl.isFocused = isFocused;
+    },
+
+    handleEvent: function (control, eventName, fieldName) {
+      switch (eventName) {
+        case "change":
+          this.cellChanged(control, fieldName);
+          break;
+        case "click":
+          this.cellClicked(control, fieldName);
+          break;
+        case "add_row":
+          this.addRowClicked(control);
+          break;
+        case "delete_row":
+          this.deleteRowClicked(control);
+          break;
+        case "add_table":
+          this.addTableClicked(control);
+          break;
+        case "delete_table":
+          this.deleteTableClicked(control);
+          break;
+        default:
+          alert("Unknown event " + eventName);
+          return;
+      }
+    },
+
+    cellChanged: function (ctl, fieldName) {
+      if (ctl instanceof jQuery) {
+        ctl = ctl.get(0);
+      }
+
+      if (ctl.tagName.toLowerCase() == "textarea") {
+        ctl.isFocused = false;
+        // multiModified(ctl);
+      }
+
+      // Do the built in edits first
+      var elementParts = this.getTableAndRowFromElement(ctl);
+      var rc = this._editValue(ctl, elementParts.fieldName, elementParts.tblSeq, elementParts.rowNumber);
+      if (!rc) {
+        ctl.focus();
+        return;
+      }
+
+      this._checkIfElementHasValue(elementParts.fieldName, elementParts.tblSeq, elementParts.rowNumber);
+      this.markElementAsOK(jq(ctl));
+
+      // User defined script
+      var funcName = fieldName + "_onchange";
+      if (this[funcName] && typeof this[funcName] == "function") {
+        this[funcName](ctl, this);
+      }
+    },
+
+    cellClicked: function (ctl, fieldName) {
+      var funcName = fieldName + "_onclick";
+      if (this[funcName] && typeof this[funcName] == "function") {
+        this[funcName](ctl, this);
+      }
+    },
+
+    addRowClicked: function (ctl) {
+      var table = this._getElementUp(ctl, "table");
+      this.setRowFocus = true;
+      this.addRow(table);
+      this.setRowFocus = false;
+    },
+
+    deleteRowClicked: function (ctl) {
+      try {
+        var row = this._getElementUp(ctl, "tr");
+        var table = this._getElementUp(row, "table");
+        var tblSeq = table.attr("table_seq");
+
+        row.remove();
+
+        var rowSeq = "-1";
+        var rows = this._getTableRows(table);
+        if (rows.length > 0) {
+          row = rows[0];
+          rowSeq = row.attr("row_seq");
+        }
+
+        if (this.onRowDelete && typeof this.onRowDelete == "function") {
+          this.onRowDelete(tblSeq, this);
+        }
+
+        // Check all columns to see if they are filled
+        for (var i = 0; i < this.tableFields.length; i++) {
+          var field = this.tableFields[i];
+          if (field.id == "remove" || !this._useField(field, tblSeq)) {
+            continue;
+          }
+
+          // Set the required field marker for the column
+          if (rowSeq != "-1") {
+            this._checkIfElementHasValue(field.id, tblSeq, rowSeq);
+          }
+        }
+
+        if (rows.length == 0) {
+          this.addRow(table);
+        }
+      } catch (ex) {
+        this._handle_exception("deleteRowClicked", ex);
+      }
+    },
+
+    addTableClicked: function (ctl) {
+      var table = this.createTableSection();
+      this.isOnLoad = true;
+      this.addRow(table);
+      this.isOnLoad = false;
+      return table;
+    },
+
+    deleteTableClicked: function (ctl) {
+      var tableID = ctl.id.substr(13);
+      this.deleteTable(tableID);
+    },
+
+    fieldChanged: function (element, eventName) {
+      var fieldName = this._getRealFieldID(ctl.id);
+      var elementParts = this.getTableAndRowFromElement(element);
+      if (!elementParts.tblSeq) {
+        // No number found
+        this._handle_exception("fieldChanged", "ERROR Table seq not found on control " + ctl.id);
+        return;
+      }
+
+      var mandatory = false;
+      var fieldValue = this.getValue(fieldName, elementParts.tblSeq, elementParts.rowNumber);
+      var nValue = fieldValue.value;
+      var fType = ctl.className;
+
+      var original = this.getElementInTable("sys_original." + ctl.id);
+      var oValue = "unknown";
+      if (original && original != undefined) oValue = original.value;
+
+      var newClass = "changed";
+      var oldClass = "";
+      var sl = this._getStatusElement(fieldName, elementParts.tblSeq, elementParts.rowNumber);
+      if (!sl) {
+        return;
+      }
+
+      if (
+        sl.className == "mandatory" ||
+        sl.attr("oclass") == "mandatory" ||
+        sl.className == "mandatory_populatedÂ¬Â¥" ||
+        sl.attr("oclass") == "mandatory_populated"
+      ) {
+        mandatory = true;
+      }
+
+      oldClass = sl.className;
+
+      if (mandatory && nValue === "") {
+        newClass = "mandatory";
+      } else if (mandatory && fType == "cat_item_option" && nValue == "false") {
+        newClass = "mandatory";
+      } else if (oValue == nValue) {
+        newClass = sl.attr("oclass");
+      }
+
+      sl.className = newClass;
+
+      if (oldClass != newClass) {
+        sl.attr("oclass", oldClass);
+      }
+
+      if (this.events[eventName] && typeof this.events[eventName] == "function" && !this.isDisabled) {
+        this.events[eventName](ctl);
+      }
+    },
+
+    resizeTextArea: function (ctl) {
+      if (ctl instanceof jQuery) {
+        ctl = ctl.get(0);
+      }
+
+      if (ctl.clientHeight == ctl.scrollHeight) {
+        ctl.style.height = "30px";
+      }
+      var maxHeight = 300;
+      var adjustedHeight = ctl.clientHeight;
+      if (!maxHeight || maxHeight > adjustedHeight) {
+        adjustedHeight = Math.max(ctl.scrollHeight, adjustedHeight);
+        if (maxHeight) {
+          adjustedHeight = Math.min(maxHeight, adjustedHeight);
+        }
+        if (adjustedHeight > ctl.clientHeight) {
+          ctl.style.height = adjustedHeight + "px";
+        }
+      }
+    },
+
+    _getStatusElement: function (fieldName, table, row) {
+      var id = fieldName + "." + table;
+      if (row) {
+        id += "." + row;
+      }
+      var el = this.getElementInTable("status." + id);
+      return el;
+    },
+
+    getElements: function (selector, parentElement) {
+      var elements = null;
+      if (parentElement) {
+        var jqObj;
+        if (parentElement instanceof jQuery) {
+          jqObj = parentElement;
+        } else {
+          jqObj = jq(parentElement);
+        }
+        elements = jqObj.find(selector);
+      } else {
+        elements = jq(selector);
+      }
+      if (elements.length == 0) {
+        return null;
+      }
+      return elements;
+    },
+
+    getElementInTable: function (elementID) {
+      var tblSection = this.getTableMarker();
+      return this.getElementByID(elementID, tblSection);
+    },
+
+    _getElementDown: function (element, tagName) {
+      if (!(element instanceof jQuery)) {
+        element = jq(element);
+      }
+      var children = element.children(tagName);
+      if (children.length == 0) {
+        return null;
+      }
+      return children;
+    },
+
+    _getElementUp: function (element, tagName) {
+      if (!(element instanceof jQuery)) {
+        element = jq(element);
+      }
+      var parents = element.parent().closest(tagName);
+      if (parents.length == 0) {
+        return null;
+      }
+      return parents;
+    },
+
+    _getElementPrevious: function (element, tagName) {
+      if (!(element instanceof jQuery)) {
+        element = jq(element);
+      }
+      var sibs = element.prevAll(tagName);
+      if (sibs.length == 0) {
+        return null;
+      }
+      return sibs;
+    },
+
+    _formatJQID: function (id) {
+      return "#" + id.replace(/(:|\.|\[|\]|,|=)/g, "\\$1");
+    },
+
+    _setReferenceSelect2: function (element, fieldProps) {
+      element.select2({
+        placeholder: "Search...",
+        containerCssClass: "wrap",
+        query: function (options) {
+          var ga = new GlideAjax("x_58056_cat_tbl_var.CatTblVarAjax");
+          ga.addParam("sysparm_name", "getTableReferenceData");
+
+          var parameters = {
+            sysparm_page: options.page,
+            sysparm_page_size: 30,
+            sysparm_term: options.term,
+            sysparm_table: fieldProps.reference,
+            sysparm_ref_qual: fieldProps.refQual,
+            sysparm_ac_columns: fieldProps.acColumns,
+            sysparm_ac_startswith: fieldProps.acStartswith ? "true" : "false",
+          };
+
+          ga.addParam("sysparm_parameters", JSON.stringify(parameters));
+          ga.getXMLAnswer(function (answer) {
+            var data = JSON.parse(answer);
+            var more = options.page * 30 < data.total_count;
+            options.callback({
+              results: data.items,
+              more: more,
+            });
+          });
+        },
+        dropdownCssClass: "bigdrop", // apply css that makes the dropdown taller
+        escapeMarkup: function (markup) {
+          return markup; // let our custom formatter work
+        },
+        minimumInputLength: 0,
+        formatResult: function (result) {
+          var descr = '<div style="margin: 2px">';
+          descr += '<span style="margin-right: 10px">' + result.text + "</span>";
+          for (var i = 0; i < result.additionalValues.length; i++) {
+            descr += '<span style="margin-right: 5px">' + result.additionalValues[i] + "</span>";
+          }
+          descr += "</div>";
+          return descr;
+        },
+        formatSelection: function (result) {
+          return result.text;
+        },
+        formatAjaxError: function (jqXHR, textStatus, errorThrown) {
+          alert("ERROR status=" + textStatus + " jqXHR=" + jqXHR);
+          return "No data found";
+        },
+      });
+      return element;
+    },
+
+    _setChoiceSelect2: function (element, fieldProps) {
+      element.select2({
+        placeholder: "",
+        data: fieldProps.select2Options,
+        escapeMarkup: function (markup) {
+          return markup; // let our custom formatter work
+        },
+        minimumInputLength: 0,
+        formatResult: function (item) {
+          return item.text;
+        },
+        formatSelection: function (item) {
+          return item.text;
+        },
+      });
+      return element;
+    },
+
+    _addStyles: function () {
+      this._injectStyles(".bigdrop", "min-width: 120px !important;");
+    },
+
+    _injectStyles: function (selector, rules) {
+      // Create the <style> tag
+      var style = document.createElement("style");
+      // WebKit hack :(
+      style.appendChild(document.createTextNode(""));
+
+      // Add the <style> element to the page
+      document.head.appendChild(style);
+
+      var sheet = style.sheet;
+
+      if ("insertRule" in sheet) {
+        sheet.insertRule(selector + "{" + rules + "}", sheet.cssRules.length);
+      } else if ("addRule" in sheet) {
+        sheet.addRule(selector, rules);
+      }
+    },
+
+    _handle_exception: function (func, ex) {
+      if (this._debug) {
+        if (ex instanceof Error) {
+          alert("Exception caught in function " + func + ":\nName:" + ex.name + "\nMessage:" + ex.message);
+        } else {
+          alert("Exception caught in function " + func + ":\n" + ex);
+        }
+      }
+    },
+  };
+
+  return new CatTblVarBuilder();
 });
 ]]></script>
         <script_name>SCTblVar</script_name>
@@ -2102,15 +1984,15 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-08-02 06:01:06</sys_created_on>
         <sys_id>6200d5abdb2f5300768670adbf961969</sys_id>
-        <sys_mod_count>9</sys_mod_count>
-        <sys_name>x_58056_cat_tbl_var.SCTblVar</sys_name>
+        <sys_mod_count>16</sys_mod_count>
+        <sys_name>x_58056_cat_tbl_va.SCTblVar</sys_name>
         <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
         <sys_policy/>
         <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
         <sys_update_name>sys_ui_script_6200d5abdb2f5300768670adbf961969</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-08-07 20:03:57</sys_updated_on>
-        <ui_type>0</ui_type>
+        <sys_updated_on>2022-06-03 01:01:46</sys_updated_on>
+        <ui_type>10</ui_type>
         <use_scoped_format>false</use_scoped_format>
     </sys_ui_script>
 </record_update>

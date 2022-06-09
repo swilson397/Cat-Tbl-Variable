@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
     <sys_script_include action="INSERT_OR_UPDATE">
-        <access>package_private</access>
+        <access>public</access>
         <active>true</active>
-        <api_name>x_58056_cat_tbl_var.CatTblVarUtils</api_name>
+        <api_name>x_58056_cat_tbl_va.CatTblVarUtils</api_name>
         <caller_access/>
         <client_callable>false</client_callable>
         <description/>
@@ -12,6 +12,7 @@
 CatTblVarUtils.DEBUG = true;
 CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER = "zzz__TABLESEQ__zzz";
 CatTblVarUtils.ROW_SEQ_PLACE_HOLDER = "zzz__ROWSEQ__zzz";
+CatTblVarUtils.DATE_TIME_FORMAT_HOLDER = "zzz__DATETIMEFORMAT__zzz";
 CatTblVarUtils.DISABLE_TABLE_YES = "yes";
 CatTblVarUtils.DISABLE_TABLE_NO = "no";
 CatTblVarUtils.DISABLE_TABLE_IF_AFTER_ORDERED = "if_after_ordered";
@@ -27,656 +28,583 @@ CatTblVarUtils.TEMPLATE_NAME_DELETE_ROW = "Delete Row Button";
 CatTblVarUtils.TEMPLATE_NAME_ADD_TABLE = "Add Table Button";
 CatTblVarUtils.TEMPLATE_NAME_DELETE_TABLE = "Delete Table Button";
 CatTblVarUtils.TEMPLATE_NAME_LABEL = "Label";
+CatTblVarUtils.TEMPLATE_UI_TYPE_DESKTOP = "desktop";
+CatTblVarUtils.TEMPLATE_UI_TYPE_SERVICE_PORTAL = "service_portal";
+CatTblVarUtils.TEMPLATE_UI_TYPE_BOTH = "both";
 
 CatTblVarUtils.prototype = {
-    initialize: function() {},
+  initialize: function () {},
 
-    getTableProperties: function(tblSysID, disableTable) {
-        var props = {};
-        props.tableProperties = {};
-        props.tableProperties.tbl_sys_id = tblSysID;
-        props.status = "";
-        props.message = "";
-        props.tableColumnList = [];
-        props.preFieldList = [];
-        props.postFieldList = [];
-        props.requiredTableColumns = [];
-        props.requiredPreFields = [];
-        props.requiredPostFields = [];
+  getTableProperties: function (tblSysID, disableTable, isSP) {
+    var props = {};
+    props.tableProperties = {};
+    props.tableProperties.tbl_sys_id = tblSysID;
+    props.status = "";
+    props.message = "";
+    props.tableColumnList = [];
+    props.preFieldList = [];
+    props.postFieldList = [];
+    props.requiredTableColumns = [];
+    props.requiredPreFields = [];
+    props.requiredPostFields = [];
 
-        props.invalid_background_color = gs.getProperty(
-            "x_58056_cat_tbl_var.invalid_missing_value_background_color"
-        );
-        props.invalid_text_color = gs.getProperty(
-            "x_58056_cat_tbl_var.invalid_missing_value_color"
-        );
+    props.invalid_background_color = gs.getProperty("x_58056_cat_tbl_var.invalid_missing_value_background_color");
+    props.invalid_text_color = gs.getProperty("x_58056_cat_tbl_var.invalid_missing_value_color");
 
-        props.loadCSS = this.getLoadCSS(["bootstrap-datetimepicker"]);
+    props.loadCSS = this.getLoadCSS(["bootstrap-datetimepicker"]);
 
-        props.tableProperties.tableName = "svt_" + gs.generateGUID();
+    props.tableProperties.tableName = "svt_" + gs.generateGUID();
 
-        this._log("getTableProperties tblSysID=" + tblSysID);
+    this._log("getTableProperties tblSysID=" + tblSysID);
 
-        var tvGR = new GlideRecord("x_58056_cat_tbl_var_catalog_table_variable");
-        if (!tvGR.get(tblSysID)) {
-            props.status = "error";
-            props.message = "Table variable not found.";
-            this._logError("Table with id " + tblSysID + " not found.");
-            return props;
-        }
+    var tvGR = new GlideRecord("x_58056_cat_tbl_var_catalog_table_variable");
+    if (!tvGR.get(tblSysID)) {
+      props.status = "error";
+      props.message = "Table variable not found.";
+      this._logError("Table with id " + tblSysID + " not found.");
+      return props;
+    }
 
-        props.tableProperties.allowMultiple = false;
-        props.tableProperties.disableAfterOrdered = true;
+    props.tableProperties.allowMultiple = false;
+    props.tableProperties.disableAfterOrdered = true;
 
-        if (tvGR.advanced) {
-            props.tableProperties.allowMultiple = tvGR.allow_multiple_occurrences ? true : false;
-            props.tableProperties.disableAfterOrdered = tvGR.disable_after_ordered ? true : false;
-        }
+    if (tvGR.advanced) {
+      props.tableProperties.allowMultiple = tvGR.allow_multiple_occurrences ? true : false;
+      props.tableProperties.disableAfterOrdered = tvGR.disable_after_ordered ? true : false;
+    }
 
-        props.tableProperties.tableIsDisabled = false;
-        if (disableTable && disableTable == CatTblVarUtils.DISABLE_TABLE_YES) {
-            props.tableProperties.tableIsDisabled = true;
-        } else if (
-            disableTable &&
-            disableTable == CatTblVarUtils.DISABLE_TABLE_IF_AFTER_ORDERED &&
-            props.tableProperties.disableAfterOrdered
-        ) {
-            props.tableProperties.tableIsDisabled = true;
-        }
+    props.tableProperties.tableIsDisabled = false;
+    if (disableTable && disableTable == CatTblVarUtils.DISABLE_TABLE_YES) {
+      props.tableProperties.tableIsDisabled = true;
+    } else if (disableTable && disableTable == CatTblVarUtils.DISABLE_TABLE_IF_AFTER_ORDERED && props.tableProperties.disableAfterOrdered) {
+      props.tableProperties.tableIsDisabled = true;
+    }
 
-        props.tableProperties.utilName = props.tableProperties.tableName + "_handler";
-        props.tableProperties.tableMarker = props.tableProperties.tableName + "_table_marker";
+    props.tableProperties.utilName = props.tableProperties.tableName + "_handler";
+    props.tableProperties.tableMarker = props.tableProperties.tableName + "_table_marker";
 
-        props.tableProperties.resultVariable = {
-            name: "table_store",
-            sys_id: ""
-        };
-        if (!tvGR.result_variable.nil()) {
-            props.tableProperties.resultVariable = {
-                name: "" + tvGR.result_variable.name,
-                sys_id: "" + tvGR.result_variable.sys_id
-            };
-        }
-        if (!tvGR.widget_variable.nil()) {
-            props.tableProperties.widgetVariable = {
-                name: "" + tvGR.widget_variable.name,
-                sys_id: "" + tvGR.widget_variable.sys_id
-            };
-        }
+    props.tableProperties.resultVariable = {
+      name: "table_store",
+      sys_id: "",
+    };
+    if (!tvGR.result_variable.nil()) {
+      props.tableProperties.resultVariable = {
+        name: "" + tvGR.result_variable.name,
+        sys_id: "" + tvGR.result_variable.sys_id,
+      };
+    }
+    if (!tvGR.widget_variable.nil()) {
+      props.tableProperties.widgetVariable = {
+        name: "" + tvGR.widget_variable.name,
+        sys_id: "" + tvGR.widget_variable.sys_id,
+      };
+    }
 
-        props.tableProperties.title = "";
-        if (tvGR.display_title) {
-            props.tableProperties.title = tvGR.title.toString();
-        }
+    props.tableProperties.title = "";
+    if (tvGR.display_title) {
+      props.tableProperties.title = tvGR.title.toString();
+    }
 
-        this.htmlUtils = new CatTblVarHTML(props.tableProperties.tableIsDisabled);
+    this.htmlUtils = new CatTblVarHTML(props.tableProperties.tableIsDisabled, isSP);
 
-        props.containerHTML = this.htmlUtils.buildContainerHTML(
-            props.tableProperties.tableName,
-            props.tableProperties.title
-        );
+    props.containerHTML = this.htmlUtils.buildContainerHTML(props.tableProperties.tableName, props.tableProperties.title);
 
-        // Get table level scripts
-        props.tableProperties.onRowDelete = "";
-        props.tableProperties.onRowDeleteScript = "";
-        if (tvGR.run_row_deleted_script) {
-            props.tableProperties.onRowDelete = props.tableProperties.utilName + "_onRowDelete";
-            props.tableProperties.onRowDeleteScript = this.formatScript(
-                tvGR.when_row_deleted.toString()
-            );
-        }
+    // Get table level scripts
+    props.tableProperties.onRowDelete = "";
+    props.tableProperties.onRowDeleteScript = "";
+    if (tvGR.run_row_deleted_script) {
+      props.tableProperties.onRowDelete = props.tableProperties.utilName + "_onRowDelete";
+      props.tableProperties.onRowDeleteScript = this.formatScript(tvGR.when_row_deleted.toString());
+    }
 
-        props.tableProperties.onRowAdd = "";
-        props.tableProperties.onRowAddScript = "";
-        if (tvGR.run_row_added_script) {
-            props.tableProperties.onRowAdd = props.tableProperties.utilName + "_onRowAdd";
-            props.tableProperties.onRowAddScript = this.formatScript(
-                tvGR.when_row_added.toString()
-            );
-        }
+    props.tableProperties.onRowAdd = "";
+    props.tableProperties.onRowAddScript = "";
+    if (tvGR.run_row_added_script) {
+      props.tableProperties.onRowAdd = props.tableProperties.utilName + "_onRowAdd";
+      props.tableProperties.onRowAddScript = this.formatScript(tvGR.when_row_added.toString());
+    }
 
-        // Add the add row button
-        var field = this.getEmptyFieldObject();
-        field.type = "button";
-        field.id = "add";
-        field.label = "Add row";
-        field.show = "always";
-        field.clickEventName = "add_row";
+    // Add the add row button
+    var field = this.getEmptyFieldObject();
+    field.type = "button";
+    field.id = "add";
+    field.label = "Add row";
+    field.show = "always";
+    field.clickEventName = "add_row";
 
-        var tempGR = this.getTemplate(
-            CatTblVarUtils.TEMPLATE_TYPE_ELEMENT,
-            CatTblVarUtils.TEMPLATE_NAME_ADD_ROW,
-            "button"
-        );
-        if (tempGR) {
-            field.cellCSS = tempGR.element_css.toString();
-            field.labelCSS = tempGR.label_css.toString();
-            field.classNames = tempGR.class_names.toString();
-            field.noLabel = true;
-        }
-        field.renderHTML = this.htmlUtils.createTableElement(
-            CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
-            CatTblVarUtils.ROW_SEQ_PLACE_HOLDER,
-            field,
-            true,
-            tblSysID
-        );
-        field.labelHTML = this.htmlUtils.createColumnHeaderElement(
-            field,
-            CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER
-        );
+    var tempGR = this.getTemplate(CatTblVarUtils.TEMPLATE_TYPE_ELEMENT, CatTblVarUtils.TEMPLATE_NAME_ADD_ROW, "button", isSP);
+    if (tempGR) {
+      field.cellCSS = tempGR.element_css.toString();
+      field.labelCSS = tempGR.label_css.toString();
+      field.classNames = tempGR.class_names.toString();
+      field.noLabel = true;
+    }
+    field.renderHTML = this.htmlUtils.createTableElement(
+      CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
+      CatTblVarUtils.ROW_SEQ_PLACE_HOLDER,
+      field,
+      true,
+      tblSysID
+    );
+    field.labelHTML = this.htmlUtils.createColumnHeaderElement(field, CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER);
 
-        props.tableProperties.addRowButton = field;
+    props.tableProperties.addRowButton = field;
 
-        // Add the add table button
-        field = this.getEmptyFieldObject();
-        field.type = "button";
-        field.id = "add_table";
-        field.label = "Add table";
-        field.show = "always";
-        field.clickEventName = "add_table";
+    // Add the add table button
+    field = this.getEmptyFieldObject();
+    field.type = "button";
+    field.id = "add_table";
+    field.label = "Add table";
+    field.show = "always";
+    field.clickEventName = "add_table";
 
-        tempGR = this.getTemplate(
-            CatTblVarUtils.TEMPLATE_TYPE_ELEMENT,
-            CatTblVarUtils.TEMPLATE_NAME_ADD_TABLE,
-            "button"
-        );
-        if (tempGR) {
-            field.cellCSS = tempGR.element_css.toString();
-            field.labelCSS = tempGR.label_css.toString();
-            field.classNames = tempGR.class_names.toString();
-            field.noLabel = true;
-        }
-        field.renderHTML = this.htmlUtils.createPlainElement(
-            field,
-            CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
-            tblSysID
-        );
-        props.tableProperties.addTableButton = field;
+    tempGR = this.getTemplate(CatTblVarUtils.TEMPLATE_TYPE_ELEMENT, CatTblVarUtils.TEMPLATE_NAME_ADD_TABLE, "button", isSP);
+    if (tempGR) {
+      field.cellCSS = tempGR.element_css.toString();
+      field.labelCSS = tempGR.label_css.toString();
+      field.classNames = tempGR.class_names.toString();
+      field.noLabel = true;
+    }
+    field.renderHTML = this.htmlUtils.createPlainElement(field, CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER, tblSysID);
+    props.tableProperties.addTableButton = field;
 
-        // Add the delete table button
-        field = this.getEmptyFieldObject();
-        field.type = "button";
-        field.id = "delete_table";
-        field.label = "Delete table";
-        field.show = "always";
-        field.clickEventName = "delete_table";
+    // Add the delete table button
+    field = this.getEmptyFieldObject();
+    field.type = "button";
+    field.id = "delete_table";
+    field.label = "Delete table";
+    field.show = "always";
+    field.clickEventName = "delete_table";
 
-        tempGR = this.getTemplate(
-            CatTblVarUtils.TEMPLATE_TYPE_ELEMENT,
-            CatTblVarUtils.TEMPLATE_NAME_DELETE_TABLE,
-            "button"
-        );
-        if (tempGR) {
-            field.cellCSS = tempGR.element_css.toString();
-            field.labelCSS = tempGR.label_css.toString();
-            field.classNames = tempGR.class_names.toString();
-            field.noLabel = true;
-        }
-        field.renderHTML = this.htmlUtils.createPlainElement(
-            field,
-            CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
-            tblSysID
-        );
-        props.tableProperties.deleteTableButton = field;
+    tempGR = this.getTemplate(CatTblVarUtils.TEMPLATE_TYPE_ELEMENT, CatTblVarUtils.TEMPLATE_NAME_DELETE_TABLE, "button", isSP);
+    if (tempGR) {
+      field.cellCSS = tempGR.element_css.toString();
+      field.labelCSS = tempGR.label_css.toString();
+      field.classNames = tempGR.class_names.toString();
+      field.noLabel = true;
+    }
+    field.renderHTML = this.htmlUtils.createPlainElement(field, CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER, tblSysID);
+    props.tableProperties.deleteTableButton = field;
 
-        props.tableHTML = this.htmlUtils.buildTableHTML(
-            props.tableProperties.tableName,
-            CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
-            tblSysID,
-            props.tableProperties.addTableButton,
-            props.tableProperties.deleteTableButton,
-            props.tableProperties.allowMultiple
-        );
+    props.tableHTML = this.htmlUtils.buildTableHTML(
+      props.tableProperties.tableName,
+      CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
+      tblSysID,
+      props.tableProperties.addTableButton,
+      props.tableProperties.deleteTableButton,
+      props.tableProperties.allowMultiple
+    );
 
-        // Get table columns
-        props.tableColumnList = this.getTableColumns(
-            tvGR,
-            props.tableProperties.utilName,
-            tblSysID
-        );
+    // Get table columns
+    props.tableColumnList = this.getTableColumns(tvGR, props.tableProperties.utilName, tblSysID, isSP);
 
-        // Get table fields
-        props.preFieldList = this.getFields(
-            tvGR,
-            "before",
-            props.tableProperties.utilName,
-            tblSysID
-        );
-        props.postFieldList = this.getFields(
-            tvGR,
-            "after",
-            props.tableProperties.utilName,
-            tblSysID
-        );
+    // Get table fields
+    props.preFieldList = this.getFields(tvGR, "before", props.tableProperties.utilName, tblSysID, isSP);
+    props.postFieldList = this.getFields(tvGR, "after", props.tableProperties.utilName, tblSysID, isSP);
 
-        props.requiredTableColumns = this.getRequiredList(props.tableColumnList);
-        props.requiredPreFields = this.getRequiredList(props.preFieldList);
-        props.requiredPostFields = this.getRequiredList(props.postFieldList);
+    props.requiredTableColumns = this.getRequiredList(props.tableColumnList);
+    props.requiredPreFields = this.getRequiredList(props.preFieldList);
+    props.requiredPostFields = this.getRequiredList(props.postFieldList);
 
-        props.tableProperties.rowFocusField = this.getFocusField(props.tableColumnList, "table", 0);
-        props.tableProperties.tableFocusField = this.getFocusField(props.requiredPreFields, "pre");
-        if (props.tableProperties.tableFocusField.index == -1) {
-            props.tableProperties.tableFocusField.source =
-                props.tableProperties.rowFocusField.source;
-            props.tableProperties.tableFocusField.index = props.tableProperties.rowFocusField.index;
-        }
+    props.tableProperties.rowFocusField = this.getFocusField(props.tableColumnList, "table", 0);
+    props.tableProperties.tableFocusField = this.getFocusField(props.requiredPreFields, "pre");
+    if (props.tableProperties.tableFocusField.index == -1) {
+      props.tableProperties.tableFocusField.source = props.tableProperties.rowFocusField.source;
+      props.tableProperties.tableFocusField.index = props.tableProperties.rowFocusField.index;
+    }
 
-        props.status = "success";
-        return props;
-    },
+    props.status = "success";
+    return props;
+  },
 
-    getLoadCSS: function(names) {
-        var css = "";
-        var ssGR = new GlideRecord("content_css");
-        ssGR.addQuery("name", names);
-        ssGR.addQuery("type", "local");
-        ssGR.query();
-        while (ssGR.next()) {
-            css += ssGR.getValue("style");
-        }
-        return css;
-    },
+  getLoadCSS: function (names) {
+    var css = "";
+    var ssGR = new GlideRecord("content_css");
+    ssGR.addQuery("name", names);
+    ssGR.addQuery("type", "local");
+    ssGR.query();
+    while (ssGR.next()) {
+      css += ssGR.getValue("style");
+    }
+    return css;
+  },
 
-    getRequiredList: function(fieldList) {
-        var reqList = [];
-        for (var i = 0; i < fieldList.length; i++) {
-            if (fieldList[i].mandatory) {
-                reqList.push(i);
-            }
-        }
-        return reqList;
-    },
+  getRequiredList: function (fieldList) {
+    var reqList = [];
+    for (var i = 0; i < fieldList.length; i++) {
+      if (fieldList[i].mandatory) {
+        reqList.push(i);
+      }
+    }
+    return reqList;
+  },
 
-    getFocusField: function(fieldList, source, defaultIdx) {
-        var focus = {
-            source: source,
-            index: -1
-        };
+  getFocusField: function (fieldList, source, defaultIdx) {
+    var focus = {
+      source: source,
+      index: -1,
+    };
 
-        for (var i = 0; i < fieldList.length; i++) {
-            if (fieldList[i].giveFocus) {
-                focus.index = i;
-                break;
-            }
-        }
-        if (focus.index == -1 && defaultIdx) {
-            focus.index = defaultIdx;
-        }
-        return focus;
-    },
+    for (var i = 0; i < fieldList.length; i++) {
+      if (fieldList[i].giveFocus) {
+        focus.index = i;
+        break;
+      }
+    }
+    if (focus.index == -1 && defaultIdx) {
+      focus.index = defaultIdx;
+    }
+    return focus;
+  },
 
-    getTableColumns: function(tblGR, tableObjectName, tblSysID) {
-        var colList = [];
+  getTableColumns: function (tblGR, tableObjectName, tblSysID, isSP) {
+    var colList = [];
 
-        // Add the delete button
-        var field = this.getEmptyFieldObject();
-        field.type = "button";
-        field.id = "remove";
-        field.label = "Delete";
-        field.show = "always";
-        field.clickEventName = "delete_row";
+    // Add the delete button
+    var field = this.getEmptyFieldObject();
+    field.type = "button";
+    field.id = "remove";
+    field.label = "Delete";
+    field.show = "always";
+    field.clickEventName = "delete_row";
 
-        var delTempGR = this.getTemplate(
-            CatTblVarUtils.TEMPLATE_TYPE_ELEMENT,
-            CatTblVarUtils.TEMPLATE_NAME_DELETE_ROW,
-            "button"
-        );
-        if (delTempGR) {
-            field.cellCSS = delTempGR.element_css.toString();
-            field.labelCSS = delTempGR.label_css.toString();
-            field.classNames = delTempGR.class_names.toString();
-            field.noLabel = true;
-        }
-        field.renderHTML = this.htmlUtils.createTableElement(
-            CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
-            CatTblVarUtils.ROW_SEQ_PLACE_HOLDER,
-            field,
-            false,
-            tblSysID
-        );
-        field.labelHTML = this.htmlUtils.createColumnHeaderElement(
-            field,
-            CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER
-        );
+    var delTempGR = this.getTemplate(CatTblVarUtils.TEMPLATE_TYPE_ELEMENT, CatTblVarUtils.TEMPLATE_NAME_DELETE_ROW, "button", isSP);
+    if (delTempGR) {
+      field.cellCSS = delTempGR.element_css.toString();
+      field.labelCSS = delTempGR.label_css.toString();
+      field.classNames = delTempGR.class_names.toString();
+      field.noLabel = true;
+    }
+    field.renderHTML = this.htmlUtils.createTableElement(
+      CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
+      CatTblVarUtils.ROW_SEQ_PLACE_HOLDER,
+      field,
+      false,
+      tblSysID
+    );
+    field.labelHTML = this.htmlUtils.createColumnHeaderElement(field, CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER);
 
+    colList.push(field);
+
+    var colGR = new GlideRecord("x_58056_cat_tbl_var_catalog_table_column");
+    colGR.addQuery("catalog_table_variable", tblGR.sys_id.toString());
+    colGR.orderBy("order");
+    colGR.query();
+    while (colGR.next()) {
+      field = this.buildFieldObject(colGR, tableObjectName, true, tblSysID, isSP);
+      if (field) {
+        this._log("field=" + field.label + " choice options=" + field.choiceOptions);
         colList.push(field);
+      } else {
+        this._logError("No template found for field type column / " + colGR.getValue("type"));
+      }
+    }
 
-        var colGR = new GlideRecord("x_58056_cat_tbl_var_catalog_table_column");
-        colGR.addQuery("catalog_table_variable", tblGR.sys_id.toString());
-        colGR.orderBy("order");
-        colGR.query();
-        while (colGR.next()) {
-            field = this.buildFieldObject(colGR, tableObjectName, true, tblSysID);
-            if (field) {
-                this._log("field=" + field.label + " choice options=" + field.choiceOptions);
-                colList.push(field);
-            } else {
-                this._logError(
-                    "No template found for field type column / " + colGR.getValue("type")
-                );
-            }
-        }
+    return colList;
+  },
 
-        return colList;
-    },
+  getEmptyFieldObject: function () {
+    var field = {};
+    field.type = "";
+    field.id = "";
+    field.label = "";
+    field.show = "";
+    field.mandatory = false;
+    field.giveFocus = false;
+    field.reference = "";
+    field.refQual = "";
+    field.acColumns = "";
+    field.acStartswith = true;
+    field.choiceOptions = [];
+    field.select2Options = [];
+    field.select2InitOption = [];
+    field.onChange = "";
+    field.onChangeScript = "";
+    field.onClick = "";
+    field.onClickScript = "";
+    field.cellCSS = "";
+    field.imageSrc = "";
+    field.labelCSS = "";
+    field.classNames = "";
+    field.noLabel = false;
+    field.clickEventName = "click";
+    field.renderHTML = "";
+    field.labelHTML = "";
 
-    getEmptyFieldObject: function() {
-        var field = {};
-        field.type = "";
-        field.id = "";
-        field.label = "";
-        field.show = "";
-        field.mandatory = false;
-        field.giveFocus = false;
-        field.reference = "";
-        field.refQual = "";
-        field.acColumns = "";
-        field.acStartswith = true;
-        field.choiceOptions = [];
-        field.select2Options = [];
-        field.select2InitOption = [];
-        field.onChange = "";
-        field.onChangeScript = "";
-        field.onClick = "";
-        field.onClickScript = "";
-        field.cellCSS = "";
-        field.imageSrc = "";
-        field.labelCSS = "";
-        field.classNames = "";
-        field.noLabel = false;
-        field.clickEventName = "click";
-        field.renderHTML = "";
-        field.labelHTML = "";
+    return field;
+  },
 
-        return field;
-    },
+  buildFieldObject: function (fGR, tableObjectName, isColumn, tblSysID, isSP) {
+    var field = this.getEmptyFieldObject();
 
-    buildFieldObject: function(fGR, tableObjectName, isColumn, tblSysID) {
-        var field = this.getEmptyFieldObject();
+    field.isColumn = isColumn;
 
-        field.isColumn = isColumn;
+    field.type = "text";
+    if (!fGR.type.nil()) {
+      field.type = fGR.type.toString();
+    }
 
-        field.type = "text";
-        if (!fGR.type.nil()) {
-            field.type = fGR.type.toString();
-        }
+    var tempGR = this.getTemplate(CatTblVarUtils.TEMPLATE_TYPE_ELEMENT, CatTblVarUtils.TEMPLATE_NAME_ELEMENT, field.type, isSP);
+    if (!tempGR) {
+      if (isColumn) {
+        tempGR = this.getTemplate(CatTblVarUtils.TEMPLATE_TYPE_ELEMENT, CatTblVarUtils.TEMPLATE_NAME_COLUMN, field.type, isSP);
+      } else {
+        tempGR = this.getTemplate(CatTblVarUtils.TEMPLATE_TYPE_ELEMENT, CatTblVarUtils.TEMPLATE_NAME_FIELD, field.type, isSP);
+      }
+    }
 
-        var tempGR = this.getTemplate(
-            CatTblVarUtils.TEMPLATE_TYPE_ELEMENT,
-            CatTblVarUtils.TEMPLATE_NAME_ELEMENT,
-            field.type
-        );
-        if (!tempGR) {
-            if (isColumn) {
-                tempGR = this.getTemplate(
-                    CatTblVarUtils.TEMPLATE_TYPE_ELEMENT,
-                    CatTblVarUtils.TEMPLATE_NAME_COLUMN,
-                    field.type
-                );
-            } else {
-                tempGR = this.getTemplate(
-                    CatTblVarUtils.TEMPLATE_TYPE_ELEMENT,
-                    CatTblVarUtils.TEMPLATE_NAME_FIELD,
-                    field.type
-                );
-            }
-        }
+    field.id = "";
+    if (!fGR.id.nil()) {
+      field.id = fGR.id.toString();
+    }
 
-        field.id = "";
-        if (!fGR.id.nil()) {
-            field.id = fGR.id.toString();
-        }
+    field.label = "";
+    if (!fGR.label.nil()) {
+      field.label = fGR.label.toString();
+    }
 
-        field.label = "";
-        if (!fGR.label.nil()) {
-            field.label = fGR.label.toString();
-        }
+    field.cellCSS = "";
+    if (!fGR.element_css.nil()) {
+      field.cellCSS = fGR.element_css.toString();
+    } else if (tempGR) {
+      field.cellCSS = tempGR.element_css.toString();
+    }
 
-        field.cellCSS = "";
-        if (!fGR.element_css.nil()) {
-            field.cellCSS = fGR.element_css.toString();
-        } else if (tempGR) {
-            field.cellCSS = tempGR.element_css.toString();
-        }
+    field.cellCSS = field.cellCSS ? field.cellCSS : "";
 
-        field.cellCSS = field.cellCSS ? field.cellCSS : "";
+    field.labelCSS = "";
+    if (!fGR.label_css.nil()) {
+      field.labelCSS = fGR.label_css.toString();
+    } else if (tempGR) {
+      field.labelCSS = tempGR.label_css.toString();
+    }
 
-        field.labelCSS = "";
-        if (!fGR.label_css.nil()) {
-            field.labelCSS = fGR.label_css.toString();
-        } else if (tempGR) {
-            field.labelCSS = tempGR.label_css.toString();
-        }
+    field.labelCSS = field.labelCSS ? field.labelCSS : "";
 
-        field.labelCSS = field.labelCSS ? field.labelCSS : "";
+    if (tempGR) {
+      field.classNames = tempGR.class_names.toString();
+    }
 
-        if (tempGR) {
-            field.classNames = tempGR.class_names.toString();
-        }
+    field.show = "always";
+    if (!fGR.display.nil()) {
+      field.show = fGR.display.toString();
+    }
 
-        field.show = "always";
-        if (!fGR.display.nil()) {
-            field.show = fGR.display.toString();
-        }
+    field.mandatory = fGR.mandatory ? true : false;
+    field.initial_focus = fGR.initial_focus;
 
-        field.mandatory = fGR.mandatory ? true : false;;
-        field.initial_focus = fGR.initial_focus;
+    field.reference = "";
+    if (!fGR.referenced_table.nil()) {
+      field.reference = fGR.referenced_table.toString();
+    }
 
-        field.reference = "";
-        if (!fGR.referenced_table.nil()) {
-            field.reference = fGR.referenced_table.toString();
-        }
+    field.refQual = "";
+    if (!fGR.reference_qualifier.nil()) {
+      field.refQual = fGR.reference_qualifier.toString();
+    }
 
-        field.refQual = "";
-        if (!fGR.reference_qualifier.nil()) {
-            field.refQual = fGR.reference_qualifier.toString();
-        }
+    field.acColumns = "";
+    if (!fGR.auto_complete_columns.nil()) {
+      field.acColumns = fGR.auto_complete_columns.toString();
+    }
 
-        field.acColumns = "";
-        if (!fGR.auto_complete_columns.nil()) {
-            field.acColumns = fGR.auto_complete_columns.toString();
-        }
+    field.acStartswith = fGR.auto_complete_startswith;
 
-        field.acStartswith = fGR.auto_complete_startswith;
+    field.choiceOptions = this.getChoices(fGR);
+    for (var i = 0; i < field.choiceOptions.length; i++) {
+      var option = field.choiceOptions[i];
+      field.select2Options.push({
+        id: option.value,
+        text: option.label,
+      });
+      if (option.selected) {
+        field.select2InitOption = {
+          id: option.value,
+          text: option.label,
+        };
+      }
+    }
 
-        field.choiceOptions = this.getChoices(fGR);
-        for (var i = 0; i < field.choiceOptions.length; i++) {
-            var option = field.choiceOptions[i];
-            field.select2Options.push({
-                id: option.value,
-                text: option.label
-            });
-            if (option.selected) {
-                field.select2InitOption = {
-                    id: option.value,
-                    text: option.label
-                };
-            }
-        }
+    field.onChange = "";
+    field.onChangeScript = "";
+    if (!fGR.on_change.nil()) {
+      field.onChange = tableObjectName + "_onChange_" + field.id;
+      field.onChangeScript = this.formatScript(fGR.on_change.toString());
+    }
 
-        field.onChange = "";
-        field.onChangeScript = "";
-        if (!fGR.on_change.nil()) {
-            field.onChange = tableObjectName + "_onChange_" + field.id;
-            field.onChangeScript = this.formatScript(fGR.on_change.toString());
-        }
+    field.onClick = "";
+    field.onClickScript = "";
+    if (!fGR.on_click.nil()) {
+      field.onClick = tableObjectName + "_onClick_" + field.id;
+      field.onClickScript = this.formatScript(fGR.on_click.toString());
+    }
 
-        field.onClick = "";
-        field.onClickScript = "";
-        if (!fGR.on_click.nil()) {
-            field.onClick = tableObjectName + "_onClick_" + field.id;
-            field.onClickScript = this.formatScript(fGR.on_click.toString());
-        }
+    field.imageSrc = "";
+    if (fGR.icon.getDisplayValue() != "") {
+      field.imageSrc = fGR.icon.getDisplayValue();
+    }
 
-        field.imageSrc = "";
-        if (fGR.icon.getDisplayValue() != "") {
-            field.imageSrc = fGR.icon.getDisplayValue();
-        }
+    if (isColumn) {
+      field.renderHTML = this.htmlUtils.createTableElement(
+        CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
+        CatTblVarUtils.ROW_SEQ_PLACE_HOLDER,
+        field,
+        false,
+        tblSysID
+      );
+      field.labelHTML = this.htmlUtils.createColumnHeaderElement(field, CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER);
+    } else {
+      field.renderHTML = this.htmlUtils.createFieldElement(CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER, field, tblSysID);
+    }
 
-        if (isColumn) {
-            field.renderHTML = this.htmlUtils.createTableElement(
-                CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
-                CatTblVarUtils.ROW_SEQ_PLACE_HOLDER,
-                field,
-                false,
-                tblSysID
-            );
-            field.labelHTML = this.htmlUtils.createColumnHeaderElement(
-                field,
-                CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER
-            );
-        } else {
-            field.renderHTML = this.htmlUtils.createFieldElement(
-                CatTblVarUtils.TABLE_SEQ_PLACE_HOLDER,
-                field,
-                tblSysID
-            );
-        }
+    return field;
+  },
 
-        return field;
-    },
+  getTemplate: function (templateType, name, subtype, isSP) {
+    var uiType = isSP ? CatTblVarUtils.TEMPLATE_UI_TYPE_SERVICE_PORTAL : CatTblVarUtils.TEMPLATE_UI_TYPE_DESKTOP;
+    this._log("getTemplate isSP=" + isSP + " uiType: " + uiType);
+    return this._getTemplate(templateType, name, subtype, uiType);
+  },
 
-    getTemplate: function(templateType, name, subtype) {
-        var tGR = new GlideRecord("x_58056_cat_tbl_var_catalog_table_template");
-        tGR.addQuery("template_type", templateType);
-        tGR.addQuery("name", name);
-        if (templateType == "element") {
-            tGR.addQuery("element_subtype", subtype);
-        }
-        tGR.query();
-        if (tGR.next()) {
-            return tGR;
-        }
-        return null;
-    },
+  _getTemplate: function (templateType, name, subtype, uiType) {
+    var tGR = new GlideRecord("x_58056_cat_tbl_var_catalog_table_template");
+    tGR.addQuery("template_type", templateType);
+    tGR.addQuery("name", name);
+    if (uiType) {
+      tGR.addQuery("x_58056_cat_tbl_va_ui_type", uiType).addOrCondition("x_58056_cat_tbl_va_ui_type", CatTblVarUtils.TEMPLATE_UI_TYPE_BOTH);
+    }
+    if (templateType == "element") {
+      tGR.addQuery("element_subtype", subtype);
+    }
+    tGR.query();
+    this._log("_getTemplate query=" + tGR.getEncodedQuery() + " Rows found: " + tGR.getRowCount());
+    if (tGR.next()) {
+      return tGR;
+    }
+    return null;
+  },
 
-    getRenderHTML: function(initHtml, props) {
-        var html = "";
-        if (initHtml != "") {
-            html = GlideStringUtil.substituteVariables(initHtml, props);
-        }
-        return html + "";
-    },
+  getRenderHTML: function (initHtml, props) {
+    var html = "";
+    if (initHtml != "") {
+      html = GlideStringUtil.substituteVariables(initHtml, props);
+    }
+    return html + "";
+  },
 
-    getReferenceLookupProps: function(refTable) {
-        var ed = null;
-        if (refTable) {
-            var grQuestionReference = new GlideRecord(refTable);
-            if (grQuestionReference.isValid()) ed = grQuestionReference.getED();
-        }
-        var refProps = {};
-        refProps.ac = "AJAXReferenceCompleter";
-        refProps.ac_columns = "";
-        refProps.ac_order_by = "";
-        if (ed != null) {
-            var completerAttr = ed.getAttribute("ref_auto_completer");
-            if (completerAttr) {
-                refProps.ac = completerAttr;
-            }
-            var columnsAttr = ed.getAttribute("ref_ac_columns");
-            if (columnsAttr) {
-                refProps.ac_columns = columnsAttr;
-            }
-            var orderAttr = ed.getAttribute("ref_ac_order_by");
-            if (orderAttr) {
-                refProps.ac_order_by = orderAttr;
-            }
-        }
-        return refProps;
-    },
+  getReferenceLookupProps: function (refTable) {
+    var ed = null;
+    if (refTable) {
+      var grQuestionReference = new GlideRecord(refTable);
+      if (grQuestionReference.isValid()) ed = grQuestionReference.getED();
+    }
+    var refProps = {};
+    refProps.ac = "AJAXReferenceCompleter";
+    refProps.ac_columns = "";
+    refProps.ac_order_by = "";
+    if (ed != null) {
+      var completerAttr = ed.getAttribute("ref_auto_completer");
+      if (completerAttr) {
+        refProps.ac = completerAttr;
+      }
+      var columnsAttr = ed.getAttribute("ref_ac_columns");
+      if (columnsAttr) {
+        refProps.ac_columns = columnsAttr;
+      }
+      var orderAttr = ed.getAttribute("ref_ac_order_by");
+      if (orderAttr) {
+        refProps.ac_order_by = orderAttr;
+      }
+    }
+    return refProps;
+  },
 
-    getFields: function(tblGR, show, tableObjectName, tblSysID) {
-        var colList = [];
+  getFields: function (tblGR, show, tableObjectName, tblSysID, isSP) {
+    var colList = [];
 
-        var fieldGR = new GlideRecord("x_58056_cat_tbl_var_catalog_table_field");
-        fieldGR.addQuery("catalog_table_variable", tblGR.sys_id.toString());
-        fieldGR.addQuery("show", show);
-        fieldGR.orderBy("order");
-        fieldGR.query();
-        while (fieldGR.next()) {
-            var field = this.buildFieldObject(fieldGR, tableObjectName, false, tblSysID);
-            if (field) {
-                colList.push(field);
-            } else {
-                this._logError(
-                    "No template found for field type field / " + fieldGR.getValue("type")
-                );
-            }
-        }
+    var fieldGR = new GlideRecord("x_58056_cat_tbl_var_catalog_table_field");
+    fieldGR.addQuery("catalog_table_variable", tblGR.sys_id.toString());
+    fieldGR.addQuery("show", show);
+    fieldGR.orderBy("order");
+    fieldGR.query();
+    while (fieldGR.next()) {
+      var field = this.buildFieldObject(fieldGR, tableObjectName, false, tblSysID, isSP);
+      if (field) {
+        colList.push(field);
+      } else {
+        this._logError("No template found for field type field / " + fieldGR.getValue("type"));
+      }
+    }
 
-        return colList;
-    },
+    return colList;
+  },
 
-    formatScript: function(script) {
-        var newScript = script.replace(/(\/\*([\s\S]*?)\*\/)|(\/\/(.*)$)/gm, "");
-        newScript = newScript.replaceAll("\r", "");
-        return newScript;
-    },
+  formatScript: function (script) {
+    var newScript = script.replace(/(\/\*([\s\S]*?)\*\/)|(\/\/(.*)$)/gm, "");
+    newScript = newScript.replaceAll("\r", "");
+    return newScript;
+  },
 
-    getChoices: function(colGR) {
-        var choices = [];
+  getChoices: function (colGR) {
+    var choices = [];
 
-        if (colGR.type.toString() != "choice") {
-            return choices;
-        }
+    if (colGR.type.toString() != "choice") {
+      return choices;
+    }
 
-        if (!colGR.advanced && !colGR.choice_table.nil() && !colGR.choice_field.nil()) {
-            var choiceTable = colGR.choice_table.toString();
-            var choiceField = colGR.choice_field.toString();
-            var init = GlideChoiceList.getChoiceList(choiceTable, choiceField);
-            this._log("choice list=" + init);
-            var choiceList = new GlideChoiceList();
-            if (colGR.include_none) {
-                choiceList.addNone();
-            }
-            choiceList.addAll(init);
+    if (!colGR.advanced && !colGR.choice_table.nil() && !colGR.choice_field.nil()) {
+      var choiceTable = colGR.choice_table.toString();
+      var choiceField = colGR.choice_field.toString();
+      var init = GlideChoiceList.getChoiceList(choiceTable, choiceField);
+      this._log("choice list=" + init);
+      var choiceList = new GlideChoiceList();
+      if (colGR.include_none) {
+        choiceList.addNone();
+      }
+      choiceList.addAll(init);
 
-            for (var x = 0; x < choiceList.size; x++) {
-                var choice = choiceList.getChoice(x);
-                var obj = {};
-                obj.label = choice.getLabel();
-                obj.value = choice.getValue();
-                obj.selected = false;
-                choices.push(obj);
-            }
-        } else if (!colGR.choice_list.nil()) {
-            // execute the script
-            var answer = [];
-            var globals = GlideStringUtil.decodeAttributes("answer");
-            globals.put("answer", answer);
-            choices = GlideEvaluator.evaluateStringWithGlobals(
-                colGR.choice_list.toString(),
-                globals
-            );
-        }
-        return choices;
-    },
+      for (var x = 0; x < choiceList.size; x++) {
+        var choice = choiceList.getChoice(x);
+        var obj = {};
+        obj.label = choice.getLabel();
+        obj.value = choice.getValue();
+        obj.selected = false;
+        choices.push(obj);
+      }
+    } else if (!colGR.choice_list.nil()) {
+      // execute the script
+      var vars = { answer: [] };
+      var evaluator = new GlideScopedEvaluator();
+      evaluator.evaluateScript(colGR, "choice_list", vars);
+      choices = evaluator.getVariable("answer");
+    }
+    return choices;
+  },
 
-    _log: function(msg) {
-        if (CatTblVarUtils.DEBUG) {
-            gs.info(msg);
-        }
-    },
+  _log: function (msg) {
+    if (CatTblVarUtils.DEBUG) {
+      gs.info(msg);
+    }
+  },
 
-    _logError: function(msg) {
-        gs.error(msg);
-    },
+  _logError: function (msg) {
+    gs.error(msg);
+  },
 
-    type: "CatTblVarUtils"
+  type: "CatTblVarUtils",
 };
 ]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-01-12 23:48:35</sys_created_on>
         <sys_id>58a971f2db2b0300768670adbf96190d</sys_id>
-        <sys_mod_count>12</sys_mod_count>
+        <sys_mod_count>19</sys_mod_count>
         <sys_name>CatTblVarUtils</sys_name>
         <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
         <sys_update_name>sys_script_include_58a971f2db2b0300768670adbf96190d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-08-11 01:06:37</sys_updated_on>
+        <sys_updated_on>2022-06-01 22:05:17</sys_updated_on>
     </sys_script_include>
 </record_update>

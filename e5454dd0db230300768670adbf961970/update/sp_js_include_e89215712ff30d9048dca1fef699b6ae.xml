@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_js_include">
+    <sp_js_include action="INSERT_OR_UPDATE">
+        <display_name>SCTblVar.js</display_name>
+        <source>local</source>
+        <sys_class_name>sp_js_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-05-31 22:09:15</sys_created_on>
+        <sys_id>e89215712ff30d9048dca1fef699b6ae</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SCTblVar.js</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_ui_script display_value="x_58056_cat_tbl_va.SCTblVar">6200d5abdb2f5300768670adbf961969</sys_ui_script>
+        <sys_update_name>sp_js_include_e89215712ff30d9048dca1fef699b6ae</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-05-31 22:09:15</sys_updated_on>
+        <url/>
+    </sp_js_include>
+</record_update>

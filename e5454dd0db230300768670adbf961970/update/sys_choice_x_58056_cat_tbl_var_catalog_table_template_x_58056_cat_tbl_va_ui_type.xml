@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="x_58056_cat_tbl_va_ui_type" table="x_58056_cat_tbl_var_catalog_table_template" version="3">
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>x_58056_cat_tbl_va_ui_type</element>
+            <name>x_58056_cat_tbl_var_catalog_table_template</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-06-01 00:48:11</sys_created_on>
+            <sys_id>e91779f12f770d9048dca1fef699b6a3</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_58056_cat_tbl_va_ui_type</sys_name>
+            <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+            <sys_update_name>sys_choice_x_58056_cat_tbl_var_catalog_table_template_x_58056_cat_tbl_va_ui_type</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2022-06-01 00:48:11</sys_updated_on>
+        </sys_choice_set>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>x_58056_cat_tbl_va_ui_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Desktop</label>
+            <language>en</language>
+            <name>x_58056_cat_tbl_var_catalog_table_template</name>
+            <sequence>0</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-06-01 00:48:11</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>211779f12f770d9048dca1fef699b6a3</sys_id>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2022-06-01 00:49:12</sys_updated_on>
+            <value>desktop</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>x_58056_cat_tbl_va_ui_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Service Portal</label>
+            <language>en</language>
+            <name>x_58056_cat_tbl_var_catalog_table_template</name>
+            <sequence>1</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-06-01 00:48:11</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>e11779f12f770d9048dca1fef699b6a5</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2022-06-01 00:49:22</sys_updated_on>
+            <value>service_portal</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>x_58056_cat_tbl_va_ui_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Both</label>
+            <language>en</language>
+            <name>x_58056_cat_tbl_var_catalog_table_template</name>
+            <sequence>2</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-06-01 00:48:11</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>a51779f12f770d9048dca1fef699b6a6</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2022-06-01 00:49:27</sys_updated_on>
+            <value>both</value>
+        </sys_choice>
+    </sys_choice>
+</record_update>

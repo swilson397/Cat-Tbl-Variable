@@ -4,7 +4,7 @@
         <client_script/>
         <description/>
         <direct>false</direct>
-        <endpoint>x_58056_cat_tbl_var_Test.do</endpoint>
+        <endpoint>x_58056_cat_tbl_va_Test.do</endpoint>
         <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
   <j:set var="jvar_user_id" value="$[gs.getUserID()]" />

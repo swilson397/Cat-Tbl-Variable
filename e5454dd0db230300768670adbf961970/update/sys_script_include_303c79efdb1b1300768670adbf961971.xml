@@ -2,7 +2,7 @@
     <sys_script_include action="INSERT_OR_UPDATE">
         <access>package_private</access>
         <active>true</active>
-        <api_name>x_58056_cat_tbl_var.Test</api_name>
+        <api_name>x_58056_cat_tbl_va.Test</api_name>
         <caller_access/>
         <client_callable>false</client_callable>
         <description/>

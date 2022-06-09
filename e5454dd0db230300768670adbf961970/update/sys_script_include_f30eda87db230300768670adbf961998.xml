@@ -2,7 +2,7 @@
     <sys_script_include action="INSERT_OR_UPDATE">
         <access>public</access>
         <active>true</active>
-        <api_name>x_58056_cat_tbl_var.CatTblVarAjax</api_name>
+        <api_name>x_58056_cat_tbl_va.CatTblVarAjax</api_name>
         <caller_access/>
         <client_callable>true</client_callable>
         <description/>
@@ -39,13 +39,14 @@ CatTblVarAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
         var utils = new CatTblVarUtils();
         var tblSysID = this.getParameter("sysparm_table_sys_id");
         var isCatItem = this.getParameter("sysparm_is_cat_item");
+        var isSP = this.getParameter("sysparm_is_sp") == "true" ? true : false;
 
         var disableTable = CatTblVarUtils.DISABLE_TABLE_NO;
 
         if (isCatItem != "true") {
             disableTable = CatTblVarUtils.DISABLE_TABLE_IF_AFTER_ORDERED;
         }
-        var props = utils.getTableProperties(tblSysID, disableTable);
+        var props = utils.getTableProperties(tblSysID, disableTable, isSP);
         return JSON.stringify(props);
     },
 
@@ -209,13 +210,13 @@ CatTblVarAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-01-13 21:06:20</sys_created_on>
         <sys_id>f30eda87db230300768670adbf961998</sys_id>
-        <sys_mod_count>21</sys_mod_count>
+        <sys_mod_count>22</sys_mod_count>
         <sys_name>CatTblVarAjax</sys_name>
         <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
         <sys_policy/>
         <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
         <sys_update_name>sys_script_include_f30eda87db230300768670adbf961998</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-05-19 22:40:00</sys_updated_on>
+        <sys_updated_on>2022-06-01 21:02:52</sys_updated_on>
     </sys_script_include>
 </record_update>

@@ -17,7 +17,7 @@ function getTaskScript() {
 }]]></client_script>
         <description/>
         <direct>false</direct>
-        <endpoint>x_58056_cat_tbl_var_show_task_client_script.do</endpoint>
+        <endpoint>x_58056_cat_tbl_va_show_task_client_script.do</endpoint>
         <html><![CDATA[<input id="table_id" type="hidden" value="${sysparm_id}" />
 <pre id="ep" rows='10' cols='80' title="Script">
 </pre>]]></html>

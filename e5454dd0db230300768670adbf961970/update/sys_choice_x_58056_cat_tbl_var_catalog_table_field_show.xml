@@ -25,6 +25,7 @@
             <language>en</language>
             <name>x_58056_cat_tbl_var_catalog_table_field</name>
             <sequence>0</sequence>
+            <synonyms/>
             <sys_created_by>admin</sys_created_by>
             <sys_created_on>2018-01-12 23:17:38</sys_created_on>
             <sys_domain>global</sys_domain>
@@ -44,6 +45,7 @@
             <language>en</language>
             <name>x_58056_cat_tbl_var_catalog_table_field</name>
             <sequence>1</sequence>
+            <synonyms/>
             <sys_created_by>admin</sys_created_by>
             <sys_created_on>2018-01-12 23:17:38</sys_created_on>
             <sys_domain>global</sys_domain>

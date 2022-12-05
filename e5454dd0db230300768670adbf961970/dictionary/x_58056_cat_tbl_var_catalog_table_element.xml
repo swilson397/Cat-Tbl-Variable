@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Catalog Table Element" max_length="40" name="x_58056_cat_tbl_var_catalog_table_element" sizeclass="10" type="collection">
+        <element attributes="edge_encryption_enabled=true" label="Advanced" max_length="40" name="advanced" type="boolean"/>
+        <element label="Auto complete columns" max_length="100" name="auto_complete_columns" type="string"/>
+        <element attributes="edge_encryption_enabled=true" default="true" label="Auto complete startswith" max_length="40" name="auto_complete_startswith" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true,encode_utf8=false" label="Table variable" max_length="32" name="catalog_table_variable" reference="x_58056_cat_tbl_var_catalog_table_variable" type="reference"/>
+        <element attributes="edge_encryption_enabled=true" dependent="choice_table" dependent_on_field="choice_table" label="Choice field" max_length="80" name="choice_field" type="field_name" use_dependent_field="true"/>
+        <element attributes="edge_encryption_enabled=true" default="// Set the variable answer to an array of choices&#10;// Each entry in the array should be an object with these properties:&#10;//   1) label = the display value for the choice option&#10;//   2) value = the value the choice option should have&#10;//   3) default = true/false - set to true if the option should be the default and the initial selection&#10;answer = [];" label="Choice list" max_length="8000" name="choice_list" type="script_plain"/>
+        <element attributes="base_start=true,edge_encryption_enabled=true" label="Choice table" max_length="80" name="choice_table" type="table_name"/>
+        <element attributes="edge_encryption_enabled=true" choice="1" default="always" label="Display" max_length="40" name="display" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Always" sequence="0" value="always"/>
+                <element inactive_on_update="false" label="First only" sequence="1" value="first"/>
+                <element inactive_on_update="false" label="Not first" sequence="2" value="not_first"/>
+            </choice>
+        </element>
+        <element label="Element CSS" max_length="100" name="element_css" type="string"/>
+        <element attributes="edge_encryption_enabled=true,pdf_cell_type=image" label="Icon" max_length="40" name="icon" type="user_image"/>
+        <element label="ID" mandatory="true" max_length="40" name="id" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Include none" max_length="40" name="include_none" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Initial focus" max_length="40" name="initial_focus" type="boolean"/>
+        <element display="true" label="Label" max_length="100" name="label" type="string"/>
+        <element label="Label CSS" max_length="100" name="label_css" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Mandatory" max_length="40" name="mandatory" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" default="/* Parameters:&#10;    control = the element which has been changed&#10;    tableUtils = an instance of CatTblVarInstance containing helper functions for manipulating the table variable    &#10;*/&#10;function onChange(control, tableUtils) {&#10;   //Type appropriate comment here, and begin script below&#10;}" label="On change" max_length="4096" name="on_change" type="script_plain"/>
+        <element attributes="edge_encryption_enabled=true" default="/* Parameters:&#10;    control = the element which has been changed&#10;    utils = an instance of CatTblVarInstance containing helper functions for manipulating the table variable&#10;*/&#10;function onClick(control, utils) {&#10;   //Type appropriate comment here, and begin script below&#10;}" label="On click" max_length="4096" name="on_click" type="script_plain"/>
+        <element attributes="edge_encryption_enabled=true" label="Order" max_length="40" name="order" type="integer"/>
+        <element attributes="base_start=true,edge_encryption_enabled=true" label="Referenced table" max_length="100" name="referenced_table" type="table_name"/>
+        <element label="Reference qualifier" max_length="100" name="reference_qualifier" type="string"/>
+        <element attributes="edge_encryption_enabled=true" default="javascript:current.getTableName();" dynamic_default_value="b5cb83a85f220100a9ad2572f2b4773c" label="Class" max_length="80" name="sys_class_name" type="sys_class_name" use_dynamic_default="true"/>
+        <element attributes="edge_encryption_enabled=true" choice="1" default="text" label="Type" max_length="40" name="type" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Text" sequence="0" value="text"/>
+                <element inactive_on_update="false" label="Number" sequence="1" value="number"/>
+                <element inactive_on_update="false" label="Choice" sequence="2" value="choice"/>
+                <element inactive_on_update="false" label="Date" sequence="3" value="date"/>
+                <element inactive_on_update="false" label="Datetime" sequence="4" value="datetime"/>
+                <element inactive_on_update="false" label="Reference" sequence="5" value="reference"/>
+                <element inactive_on_update="false" label="Checkbox" sequence="6" value="checkbox"/>
+                <element inactive_on_update="false" label="Button" sequence="7" value="button"/>
+                <element inactive_on_update="false" label="Multi-line Text" sequence="8" value="multiline_text"/>
+            </choice>
+        </element>
+        <index name="index">
+            <element name="catalog_table_variable"/>
+        </index>
+        <index name="index2">
+            <element name="sys_class_name"/>
+        </index>
+    </element>
+</database>

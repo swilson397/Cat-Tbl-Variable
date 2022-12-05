@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Catalog Table Template" max_length="40" name="x_58056_cat_tbl_var_catalog_table_template" sizeclass="12" type="collection">
+        <element label="Class names" max_length="100" name="class_names" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Description template" max_length="1000" name="description" type="string"/>
+        <element label="Element CSS" max_length="100" name="element_css" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Element description" max_length="1000" name="element_description" type="string"/>
+        <element attributes="edge_encryption_enabled=true" choice="1" choice_field="type" choice_table="x_58056_cat_tbl_var_catalog_table_element" label="Subtype" max_length="40" name="element_subtype" type="choice">
+            <choice/>
+        </element>
+        <element attributes="edge_encryption_enabled=true" choice="1" label="Element type" max_length="40" name="element_type" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Column" sequence="0" value="column"/>
+                <element inactive_on_update="false" label="Field" sequence="1" value="field"/>
+                <element inactive_on_update="false" label="Label" sequence="2" value="label"/>
+                <element inactive_on_update="false" label="Add Row" sequence="3" value="add"/>
+                <element inactive_on_update="false" label="Delete Row" sequence="4" value="delete"/>
+                <element inactive_on_update="false" label="Add Table" sequence="5" value="add_table"/>
+                <element inactive_on_update="false" label="Delete Table" sequence="6" value="delete_table"/>
+            </choice>
+        </element>
+        <element attributes="edge_encryption_enabled=true" label="HTML template" max_length="4096" name="html_template" type="html"/>
+        <element attributes="edge_encryption_enabled=true" label="Javascript template" max_length="4096" name="javascript_template" type="script_plain"/>
+        <element label="Label CSS" max_length="100" name="label_css" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Name" max_length="100" name="name" type="string"/>
+        <element attributes="edge_encryption_enabled=true" choice="1" default="element" label="Template type" mandatory="true" max_length="40" name="template_type" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Element" sequence="0" value="element"/>
+                <element inactive_on_update="false" label="Script" sequence="1" value="script"/>
+                <element inactive_on_update="false" label="HTML" sequence="2" value="html"/>
+                <element inactive_on_update="false" label="XML" sequence="3" value="xml"/>
+            </choice>
+        </element>
+        <element label="XML template" max_length="65000" name="xml_template" type="string"/>
+        <element attributes="edge_encryption_enabled=true" choice="1" label="UI type" max_length="40" name="x_58056_cat_tbl_va_ui_type" type="string">
+            <choice>
+                <element inactive_on_update="false" label="Desktop" sequence="0" value="desktop"/>
+                <element inactive_on_update="false" label="Service Portal" sequence="1" value="service_portal"/>
+                <element inactive_on_update="false" label="Both" sequence="2" value="both"/>
+            </choice>
+        </element>
+    </element>
+</database>

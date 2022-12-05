@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sc_cat_item_user_criteria_no_mtom">
+    <sc_cat_item_user_criteria_no_mtom action="DELETE">
+        <sc_cat_item display_value="Copy of Submit Recipe">01e9beed2fa70d5048dca1fef699b663</sc_cat_item>
+        <sys_class_name>sc_cat_item_user_criteria_no_mtom</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-05-19 00:45:54</sys_created_on>
+        <sys_id>95e9b6212fe70d5048dca1fef699b6d5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Copy of Submit Recipe.SNC External</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sc_cat_item_user_criteria_no_mtom_95e9b6212fe70d5048dca1fef699b6d5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:45:54</sys_updated_on>
+        <user_criteria display_value="SNC External">66c1b50e730333009508738234f6a7c9</user_criteria>
+    </sc_cat_item_user_criteria_no_mtom>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</application>
+        <file_path/>
+        <instance_id>2570b4f36f4fb1006626a9cc5d3ee464</instance_id>
+        <instance_name>dev12292</instance_name>
+        <name>sc_cat_item_user_criteria_no_mtom_95e9b6212fe70d5048dca1fef699b6d5</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sc_cat_item_user_criteria_no_mtom"><sc_cat_item_user_criteria_no_mtom action="INSERT_OR_UPDATE"><sc_cat_item display_value="Copy of Submit Recipe">01e9beed2fa70d5048dca1fef699b663</sc_cat_item><sys_class_name>sc_cat_item_user_criteria_no_mtom</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2022-05-19 00:45:54</sys_created_on><sys_id>95e9b6212fe70d5048dca1fef699b6d5</sys_id><sys_mod_count>0</sys_mod_count><sys_name>Copy of Submit Recipe.SNC External</sys_name><sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package><sys_policy/><sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope><sys_update_name>sc_cat_item_user_criteria_no_mtom_95e9b6212fe70d5048dca1fef699b6d5</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2022-05-19 00:45:54</sys_updated_on><user_criteria display_value="SNC External">66c1b50e730333009508738234f6a7c9</user_criteria></sc_cat_item_user_criteria_no_mtom></record_update>]]></payload>
+        <payload_hash>1173428206</payload_hash>
+        <record_name>Copy of Submit Recipe.SNC External</record_name>
+        <reverted_from/>
+        <source>f88f049c079a2010e3b2f8ed7c1ed0a6</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-05-19 00:45:54</sys_created_on>
+        <sys_id>11e9b6212fe70d5048dca1fef699b6d8</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>180d9c73c4d0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:45:54</sys_updated_on>
+        <type>Catalog Item Not Available for</type>
+        <update_guid>19e9b62165e70d500370e8b26ec1e6d7</update_guid>
+        <update_guid_history>19e9b62165e70d500370e8b26ec1e6d7:1173428206</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Copy of Submit Recipe.SNC External">e81aba212fe70d5048dca1fef699b608</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-05-19 00:46:41</sys_created_on>
+        <sys_db_object display_value="" name="sc_cat_item_user_criteria_no_mtom">sc_cat_item_user_criteria_no_mtom</sys_db_object>
+        <sys_id>6b400a61df4344f0bb5dd71ba8097e44</sys_id>
+        <sys_metadata>95e9b6212fe70d5048dca1fef699b6d5</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Copy of Submit Recipe.SNC External</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_scope_delete display_value="">0056346d5be04b4f802117dcbe1a2a19</sys_scope_delete>
+        <sys_update_name>sc_cat_item_user_criteria_no_mtom_95e9b6212fe70d5048dca1fef699b6d5</sys_update_name>
+        <sys_update_version display_value="sc_cat_item_user_criteria_no_mtom_95e9b6212fe70d5048dca1fef699b6d5">11e9b6212fe70d5048dca1fef699b6d8</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:46:41</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

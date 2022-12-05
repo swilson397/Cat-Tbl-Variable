@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Catalog Table Variable" max_length="40" name="x_58056_cat_tbl_var_catalog_table_variable" sizeclass="1" type="collection">
+        <element attributes="edge_encryption_enabled=true" label="Advanced" max_length="40" name="advanced" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Allow multiple occurences" max_length="40" name="allow_multiple_occurences" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" default="true" label="Disable after ordered" max_length="40" name="disable_after_ordered" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Display title" max_length="40" name="display_title" type="boolean"/>
+        <element label="Initial table header" max_length="100" name="initial_table_header" type="string"/>
+        <element attributes="edge_encryption_enabled=true,encode_utf8=false" label="Onchange catalog client script" max_length="32" name="onchange_catalog_client_script" reference="catalog_script_client" type="reference"/>
+        <element attributes="edge_encryption_enabled=true,encode_utf8=false" label="OnSubmit catalog client script" max_length="32" name="onsubmit_catalog_client_script" reference="catalog_script_client" type="reference"/>
+        <element attributes="edge_encryption_enabled=true,encode_utf8=false" label="Result variable" max_length="32" name="result_variable" reference="item_option_new" type="reference"/>
+        <element attributes="edge_encryption_enabled=true" label="Run script" max_length="40" name="run_row_added_script" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Run script" max_length="40" name="run_row_deleted_script" type="boolean"/>
+        <element display="true" label="Short description" max_length="100" name="short_description" type="string"/>
+        <element attributes="edge_encryption_enabled=true,encode_utf8=false" label="Task client script" max_length="32" name="task_client_script" reference="sys_script_client" type="reference"/>
+        <element label="Title" max_length="100" name="title" type="string"/>
+        <element attributes="edge_encryption_enabled=true,encode_utf8=false" label="Macro name" max_length="32" name="ui_macro_name" reference="sys_ui_macro" type="reference"/>
+        <element attributes="edge_encryption_enabled=true,encode_utf8=false" label="Variable set" max_length="32" name="variable_set" reference="item_option_new_set" type="reference"/>
+        <element attributes="edge_encryption_enabled=true" default="true" label="Visible on summaries" max_length="40" name="visible_on_summaries" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" default="/**&#13;&#10; * &#13;&#10; * @param {string}&#13;&#10; *            rowID = unique id for the row within th table. To find an element in a row append this value to the column&#13;&#10; *            name separated by a &quot;.&quot;&#13;&#10; * @param {boolean}&#13;&#10; *            isLoading = true if the form has just been rendered false otherwise&#13;&#10; * @param {object}&#13;&#10; *            tableUtils = an instance of CatTblVarInstance containing helper functions for manipulating the table&#13;&#10; *            variable&#13;&#10; */&#13;&#10;function onRowAdd(rowID, isLoading, tableUtils) {&#13;&#10;    // Type appropriate comment here, and begin script below&#13;&#10;}" label="When row added" max_length="4096" name="when_row_added" type="script_plain"/>
+        <element attributes="edge_encryption_enabled=true" default="/**&#13;&#10; * &#13;&#10; * @param {string}&#13;&#10; *            tableSeq = sequence number for the table whose row was removed. This is generally '1' unless you allow&#13;&#10; *            multiple tables to be added.&#13;&#10; * @param {object}&#13;&#10; *            tableUtils = an instance of CatTblVarInstance containing helper functions for manipulating the table&#13;&#10; *            variable&#13;&#10; */&#13;&#10;function onRowDelete(tableSeq, tableUtils) {&#13;&#10;    // Type appropriate comment here, and begin script below&#13;&#10;}" label="When row deleted" max_length="4096" name="when_row_deleted" type="script_plain"/>
+        <element attributes="edge_encryption_enabled=true,encode_utf8=false" label="Widget variable" max_length="32" name="widget_variable" reference="item_option_new" type="reference"/>
+        <index name="index">
+            <element name="result_variable"/>
+        </index>
+        <index name="index2">
+            <element name="onsubmit_catalog_client_script"/>
+        </index>
+        <index name="index3">
+            <element name="variable_set"/>
+        </index>
+        <index name="index4">
+            <element name="onchange_catalog_client_script"/>
+        </index>
+        <index name="index5">
+            <element name="ui_macro_name"/>
+        </index>
+        <index name="index6">
+            <element name="task_client_script"/>
+        </index>
+        <index name="index7">
+            <element name="widget_variable"/>
+        </index>
+    </element>
+</database>

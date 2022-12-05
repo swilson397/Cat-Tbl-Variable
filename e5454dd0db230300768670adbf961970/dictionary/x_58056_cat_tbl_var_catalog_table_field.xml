@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element extends="x_58056_cat_tbl_var_catalog_table_element" label="Catalog Table Field" max_length="40" name="x_58056_cat_tbl_var_catalog_table_field" sizeclass="1" type="collection">
+        <element attributes="edge_encryption_enabled=true" choice="1" default="before" label="Show" max_length="40" name="show" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Before table" sequence="0" value="before"/>
+                <element inactive_on_update="false" label="After table" sequence="1" value="after"/>
+            </choice>
+        </element>
+    </element>
+</database>

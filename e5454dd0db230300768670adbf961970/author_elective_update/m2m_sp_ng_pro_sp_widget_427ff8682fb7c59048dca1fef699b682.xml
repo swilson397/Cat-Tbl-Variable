@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_ng_pro_sp_widget">
+    <m2m_sp_ng_pro_sp_widget action="DELETE">
+        <sp_angular_provider display_value="datetimepickerjs">e06e78282fb7c59048dca1fef699b6df</sp_angular_provider>
+        <sp_widget display_value="ACN - Catalog Table Variable">0d12293bdbe39300768670adbf9619ab</sp_widget>
+        <sys_class_name>m2m_sp_ng_pro_sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-05-27 23:32:48</sys_created_on>
+        <sys_id>427ff8682fb7c59048dca1fef699b682</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>datetimepickerjs.ACN - Catalog Table Variable</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>m2m_sp_ng_pro_sp_widget_427ff8682fb7c59048dca1fef699b682</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-05-27 23:32:48</sys_updated_on>
+    </m2m_sp_ng_pro_sp_widget>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</application>
+        <file_path/>
+        <instance_id>2570b4f36f4fb1006626a9cc5d3ee464</instance_id>
+        <instance_name>dev12292</instance_name>
+        <name>m2m_sp_ng_pro_sp_widget_427ff8682fb7c59048dca1fef699b682</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_ng_pro_sp_widget"><m2m_sp_ng_pro_sp_widget action="INSERT_OR_UPDATE"><sp_angular_provider display_value="datetimepickerjs">e06e78282fb7c59048dca1fef699b6df</sp_angular_provider><sp_widget display_value="ACN - Catalog Table Variable">0d12293bdbe39300768670adbf9619ab</sp_widget><sys_class_name>m2m_sp_ng_pro_sp_widget</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2022-05-27 23:32:48</sys_created_on><sys_id>427ff8682fb7c59048dca1fef699b682</sys_id><sys_mod_count>0</sys_mod_count><sys_name>datetimepickerjs.ACN - Catalog Table Variable</sys_name><sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package><sys_policy/><sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope><sys_update_name>m2m_sp_ng_pro_sp_widget_427ff8682fb7c59048dca1fef699b682</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2022-05-27 23:32:48</sys_updated_on></m2m_sp_ng_pro_sp_widget></record_update>]]></payload>
+        <payload_hash>-554612420</payload_hash>
+        <record_name>datetimepickerjs.ACN - Catalog Table Variable</record_name>
+        <reverted_from/>
+        <source>f88f049c079a2010e3b2f8ed7c1ed0a6</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-05-27 23:32:48</sys_created_on>
+        <sys_id>8a7ff8682fb7c59048dca1fef699b683</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>18107dd89e70000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-05-27 23:32:48</sys_updated_on>
+        <type>Angular Providers</type>
+        <update_guid>827ff868ffb7c590b19df96c4ad21a83</update_guid>
+        <update_guid_history>827ff868ffb7c590b19df96c4ad21a83:-554612420</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="datetimepickerjs.ACN - Catalog Table Variable">3e83c56c2fb7c59048dca1fef699b6e7</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-05-27 23:50:36</sys_created_on>
+        <sys_db_object display_value="" name="m2m_sp_ng_pro_sp_widget">m2m_sp_ng_pro_sp_widget</sys_db_object>
+        <sys_id>785701199f7a4cab8059041965d29b99</sys_id>
+        <sys_metadata>427ff8682fb7c59048dca1fef699b682</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>datetimepickerjs.ACN - Catalog Table Variable</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_scope_delete display_value="">0056346d5be04b4f802117dcbe1a2a19</sys_scope_delete>
+        <sys_update_name>m2m_sp_ng_pro_sp_widget_427ff8682fb7c59048dca1fef699b682</sys_update_name>
+        <sys_update_version display_value="m2m_sp_ng_pro_sp_widget_427ff8682fb7c59048dca1fef699b682">8a7ff8682fb7c59048dca1fef699b683</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-05-27 23:50:36</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

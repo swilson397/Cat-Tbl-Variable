@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element extends="x_58056_cat_tbl_var_catalog_table_element" label="Catalog table column" max_length="40" name="x_58056_cat_tbl_var_catalog_table_column" sizeclass="9" type="collection"/>
+</database>

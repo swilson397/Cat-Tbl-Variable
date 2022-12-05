@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="io_set_item">
+    <io_set_item action="DELETE">
+        <order>100</order>
+        <sc_cat_item display_value="Copy of Submit Recipe">01e9beed2fa70d5048dca1fef699b663</sc_cat_item>
+        <sys_class_name>io_set_item</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-05-19 00:45:54</sys_created_on>
+        <sys_id>15e9b6212fe70d5048dca1fef699b6d0</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>recipes_vs.Copy of Submit Recipe</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>io_set_item_15e9b6212fe70d5048dca1fef699b6d0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:45:54</sys_updated_on>
+        <variable_set display_value="recipes_vs">91607aa52fa70d5048dca1fef699b6b1</variable_set>
+    </io_set_item>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</application>
+        <file_path/>
+        <instance_id>2570b4f36f4fb1006626a9cc5d3ee464</instance_id>
+        <instance_name>dev12292</instance_name>
+        <name>io_set_item_15e9b6212fe70d5048dca1fef699b6d0</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="io_set_item"><io_set_item action="INSERT_OR_UPDATE"><order>100</order><sc_cat_item display_value="Copy of Submit Recipe">01e9beed2fa70d5048dca1fef699b663</sc_cat_item><sys_class_name>io_set_item</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2022-05-19 00:45:54</sys_created_on><sys_id>15e9b6212fe70d5048dca1fef699b6d0</sys_id><sys_mod_count>0</sys_mod_count><sys_name>recipes_vs.Copy of Submit Recipe</sys_name><sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package><sys_policy/><sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope><sys_update_name>io_set_item_15e9b6212fe70d5048dca1fef699b6d0</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2022-05-19 00:45:54</sys_updated_on><variable_set display_value="recipes_vs">91607aa52fa70d5048dca1fef699b6b1</variable_set></io_set_item></record_update>]]></payload>
+        <payload_hash>1175058156</payload_hash>
+        <record_name>recipes_vs.Copy of Submit Recipe</record_name>
+        <reverted_from/>
+        <source>f88f049c079a2010e3b2f8ed7c1ed0a6</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-05-19 00:45:54</sys_created_on>
+        <sys_id>19e9b6212fe70d5048dca1fef699b6d4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>180d9c73be80000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:45:54</sys_updated_on>
+        <type>Catalog Variable Set</type>
+        <update_guid>11e9b62171e70d509803ec678c649bd4</update_guid>
+        <update_guid_history>11e9b62171e70d509803ec678c649bd4:1175058156</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="recipes_vs.Copy of Submit Recipe">f41aba212fe70d5048dca1fef699b649</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-05-19 00:46:41</sys_created_on>
+        <sys_db_object display_value="" name="io_set_item">io_set_item</sys_db_object>
+        <sys_id>1015af2f3f0d43ad8af2703283664681</sys_id>
+        <sys_metadata>15e9b6212fe70d5048dca1fef699b6d0</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>recipes_vs.Copy of Submit Recipe</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_scope_delete display_value="">0056346d5be04b4f802117dcbe1a2a19</sys_scope_delete>
+        <sys_update_name>io_set_item_15e9b6212fe70d5048dca1fef699b6d0</sys_update_name>
+        <sys_update_version display_value="io_set_item_15e9b6212fe70d5048dca1fef699b6d0">19e9b6212fe70d5048dca1fef699b6d4</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-05-19 00:46:41</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

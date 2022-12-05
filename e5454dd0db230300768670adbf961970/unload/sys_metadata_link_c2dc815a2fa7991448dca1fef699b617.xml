@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
+    <sys_metadata_link action="INSERT_OR_UPDATE">
+        <directory>unload</directory>
+        <documentkey>79aa89e2db230300768670adbf9619ce</documentkey>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_58056_cat_tbl_var_catalog_table_template"&gt;
+    &lt;x_58056_cat_tbl_var_catalog_table_template action="INSERT_OR_UPDATE"&gt;
+        &lt;class_names/&gt;
+        &lt;description&gt;Activate this client script to properly render the '{0}' catalog table variable on non-catalog task-based records. For example, if you use a record producer to generate a change request and you include a catalog table variable on the record producer then activate this client script to have the table properly rendered on the change request form.&lt;/description&gt;
+        &lt;element_css/&gt;
+        &lt;element_description/&gt;
+        &lt;element_subtype/&gt;
+        &lt;element_type/&gt;
+        &lt;html_template/&gt;
+        &lt;javascript_template&gt;&lt;![CDATA[function onLoad() {
+    addRenderEvent(function() {
+                var rVar = '{0}';
+                var ctvID = '{1}';
+                if (typeof g_sc_form != 'undefined') {
+                    var realName = g_sc_form.resolveNameMap(rVar);
+                    var control = g_sc_form.getControl(realName);
+                    if (control != undefined) {
+                        ScriptLoader.getScripts('CatTblVar.jsdbx', function() {
+                                    new CatTblVar(ctvID, control);
+                                });
+                    }
+                }
+            });
+}]]&gt;&lt;/javascript_template&gt;
+        &lt;label_css/&gt;
+        &lt;name&gt;Task Client Script&lt;/name&gt;
+        &lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+        &lt;sys_created_on&gt;2018-01-12 01:45:36&lt;/sys_created_on&gt;
+        &lt;sys_id&gt;79aa89e2db230300768670adbf9619ce&lt;/sys_id&gt;
+        &lt;sys_mod_count&gt;5&lt;/sys_mod_count&gt;
+        &lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+        &lt;sys_updated_on&gt;2022-06-01 22:03:59&lt;/sys_updated_on&gt;
+        &lt;template_type&gt;script&lt;/template_type&gt;
+        &lt;x_58056_cat_tbl_va_ui_type&gt;both&lt;/x_58056_cat_tbl_va_ui_type&gt;
+        &lt;xml_template/&gt;
+    &lt;/x_58056_cat_tbl_var_catalog_table_template&gt;
+&lt;/record_update&gt;
+</payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-12-05 20:56:02</sys_created_on>
+        <sys_id>c2dc815a2fa7991448dca1fef699b617</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_metadata_link_c2dc815a2fa7991448dca1fef699b617</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-12-05 20:56:02</sys_updated_on>
+        <tablename>x_58056_cat_tbl_var_catalog_table_templa</tablename>
+    </sys_metadata_link>
+</record_update>

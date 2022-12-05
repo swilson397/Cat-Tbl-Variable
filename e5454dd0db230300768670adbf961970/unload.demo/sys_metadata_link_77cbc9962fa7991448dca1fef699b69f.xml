@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
+    <sys_metadata_link action="INSERT_OR_UPDATE">
+        <directory>unload.demo</directory>
+        <documentkey>744cb2e12fe70d5048dca1fef699b677</documentkey>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_58056_cat_tbl_var_catalog_table_variable"&gt;
+    &lt;x_58056_cat_tbl_var_catalog_table_variable action="INSERT_OR_UPDATE"&gt;
+        &lt;advanced&gt;true&lt;/advanced&gt;
+        &lt;allow_multiple_occurences&gt;false&lt;/allow_multiple_occurences&gt;
+        &lt;disable_after_ordered&gt;true&lt;/disable_after_ordered&gt;
+        &lt;display_title&gt;true&lt;/display_title&gt;
+        &lt;initial_table_header/&gt;
+        &lt;onchange_catalog_client_script display_value="recipes_oc_cs"&gt;fc9cf6e12fe70d5048dca1fef699b676&lt;/onchange_catalog_client_script&gt;
+        &lt;onsubmit_catalog_client_script display_value="recipes_os_cs"&gt;b09cf6e12fe70d5048dca1fef699b67b&lt;/onsubmit_catalog_client_script&gt;
+        &lt;result_variable display_value="recipes"&gt;7c9c36e12fe70d5048dca1fef699b668&lt;/result_variable&gt;
+        &lt;run_row_added_script&gt;false&lt;/run_row_added_script&gt;
+        &lt;run_row_deleted_script&gt;false&lt;/run_row_deleted_script&gt;
+        &lt;short_description&gt;Recipes&lt;/short_description&gt;
+        &lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+        &lt;sys_created_on&gt;2022-05-19 00:57:36&lt;/sys_created_on&gt;
+        &lt;sys_id&gt;744cb2e12fe70d5048dca1fef699b677&lt;/sys_id&gt;
+        &lt;sys_mod_count&gt;2&lt;/sys_mod_count&gt;
+        &lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+        &lt;sys_updated_on&gt;2022-05-21 00:03:29&lt;/sys_updated_on&gt;
+        &lt;task_client_script/&gt;
+        &lt;title&gt;Ingredients&lt;/title&gt;
+        &lt;ui_macro_name/&gt;
+        &lt;variable_set display_value="recipes_vs"&gt;309c36e12fe70d5048dca1fef699b665&lt;/variable_set&gt;
+        &lt;visible_on_summaries&gt;true&lt;/visible_on_summaries&gt;
+        &lt;when_row_added&gt;&lt;![CDATA[/**
+ * 
+ * @param {string}
+ *            rowID = unique id for the row within th table. To find an element in a row append this value to the column
+ *            name separated by a "."
+ * @param {boolean}
+ *            isLoading = true if the form has just been rendered false otherwise
+ * @param {object}
+ *            tableUtils = an instance of CatTblVarInstance containing helper functions for manipulating the table
+ *            variable
+ */
+function onRowAdd(rowID, isLoading, tableUtils) {
+    // Type appropriate comment here, and begin script below
+}]]&gt;&lt;/when_row_added&gt;
+        &lt;when_row_deleted&gt;&lt;![CDATA[/**
+ * 
+ * @param {string}
+ *            tableSeq = sequence number for the table whose row was removed. This is generally '1' unless you allow
+ *            multiple tables to be added.
+ * @param {object}
+ *            tableUtils = an instance of CatTblVarInstance containing helper functions for manipulating the table
+ *            variable
+ */
+function onRowDelete(tableSeq, tableUtils) {
+    // Type appropriate comment here, and begin script below
+}]]&gt;&lt;/when_row_deleted&gt;
+        &lt;widget_variable display_value="recipes_widget"&gt;bc9cf6e12fe70d5048dca1fef699b672&lt;/widget_variable&gt;
+    &lt;/x_58056_cat_tbl_var_catalog_table_variable&gt;
+&lt;/record_update&gt;
+</payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-12-05 20:51:31</sys_created_on>
+        <sys_id>77cbc9962fa7991448dca1fef699b69f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_metadata_link_77cbc9962fa7991448dca1fef699b69f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-12-05 20:51:31</sys_updated_on>
+        <tablename>x_58056_cat_tbl_var_catalog_table_variab</tablename>
+    </sys_metadata_link>
+</record_update>

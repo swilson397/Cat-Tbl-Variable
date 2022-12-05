@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
+    <sys_metadata_link action="INSERT_OR_UPDATE">
+        <directory>unload.demo</directory>
+        <documentkey>976c7ea12fe70d5048dca1fef699b61b</documentkey>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_58056_cat_tbl_var_catalog_table_column"&gt;
+    &lt;x_58056_cat_tbl_var_catalog_table_column action="INSERT_OR_UPDATE"&gt;
+        &lt;advanced&gt;true&lt;/advanced&gt;
+        &lt;auto_complete_columns/&gt;
+        &lt;auto_complete_startswith&gt;true&lt;/auto_complete_startswith&gt;
+        &lt;catalog_table_variable display_value="Recipes"&gt;744cb2e12fe70d5048dca1fef699b677&lt;/catalog_table_variable&gt;
+        &lt;choice_field/&gt;
+        &lt;choice_list&gt;&lt;![CDATA[// Set the variable answer to an array of choices
+// Each entry in the array should be an object with these properties:
+//   1) label = the display value for the choice option
+//   2) value = the value the choice option should have
+//   3) default = true/false - set to true if the option should be the default and the initial selection
+answer = [{
+    label: "--- None ---",
+    value: "",
+    "default": false
+}, {
+    label: "Ounces",
+    value: "ounces",
+    "default": true
+}, {
+    label: "Cups",
+    value: "cups",
+    "default": false
+}];]]&gt;&lt;/choice_list&gt;
+        &lt;choice_table/&gt;
+        &lt;display&gt;always&lt;/display&gt;
+        &lt;element_css/&gt;
+        &lt;icon/&gt;
+        &lt;id&gt;unit&lt;/id&gt;
+        &lt;include_none&gt;false&lt;/include_none&gt;
+        &lt;initial_focus&gt;false&lt;/initial_focus&gt;
+        &lt;label&gt;Unit&lt;/label&gt;
+        &lt;label_css/&gt;
+        &lt;mandatory&gt;true&lt;/mandatory&gt;
+        &lt;on_change&gt;&lt;![CDATA[/* Parameters:
+    control = the element which has been changed
+    tableUtils = an instance of CatTblVarInstance containing helper functions for manipulating the table variable    
+*/
+function onChange(control, tableUtils) {
+   //Type appropriate comment here, and begin script below
+}]]&gt;&lt;/on_change&gt;
+        &lt;on_click&gt;&lt;![CDATA[/* Parameters:
+    control = the element which has been changed
+    utils = an instance of CatTblVarInstance containing helper functions for manipulating the table variable
+*/
+function onClick(control, utils) {
+   //Type appropriate comment here, and begin script below
+}]]&gt;&lt;/on_click&gt;
+        &lt;order&gt;300&lt;/order&gt;
+        &lt;reference_qualifier/&gt;
+        &lt;referenced_table/&gt;
+        &lt;sys_class_name&gt;x_58056_cat_tbl_var_catalog_table_column&lt;/sys_class_name&gt;
+        &lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+        &lt;sys_created_on&gt;2022-05-19 00:57:36&lt;/sys_created_on&gt;
+        &lt;sys_id&gt;976c7ea12fe70d5048dca1fef699b61b&lt;/sys_id&gt;
+        &lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;
+        &lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+        &lt;sys_updated_on&gt;2022-05-24 23:10:59&lt;/sys_updated_on&gt;
+        &lt;type&gt;choice&lt;/type&gt;
+    &lt;/x_58056_cat_tbl_var_catalog_table_column&gt;
+&lt;/record_update&gt;
+</payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-12-05 20:52:49</sys_created_on>
+        <sys_id>b61c051a2fa7991448dca1fef699b695</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Unit</sys_name>
+        <sys_package display_value="Cat Tbl Variable" source="x_58056_cat_tbl_var">e5454dd0db230300768670adbf961970</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Cat Tbl Variable">e5454dd0db230300768670adbf961970</sys_scope>
+        <sys_update_name>sys_metadata_link_b61c051a2fa7991448dca1fef699b695</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-12-05 20:52:49</sys_updated_on>
+        <tablename>x_58056_cat_tbl_var_catalog_table_column</tablename>
+    </sys_metadata_link>
+</record_update>
